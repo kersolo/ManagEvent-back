@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { PrismaModule } from 'src/prisma/prisma.module';
+import { PrismaModule } from 'prisma/prisma.module';
 import { TaskEventsController } from './task-events.controller';
 import { TaskEventsService } from './task-events.service';
 

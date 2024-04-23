@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
+import { PrismaModule } from '../prisma/prisma.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { EventsModule } from './events/events.module';
 import { NotificationsModule } from './notifications/notifications.module';
-import { PrismaModule } from './prisma/prisma.module';
 import { ProfilesModule } from './profiles/profiles.module';
 import { TaskEventsModule } from './task-events/task-events.module';
 import { TasksModule } from './tasks/tasks.module';

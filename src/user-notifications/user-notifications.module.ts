@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { PrismaModule } from 'src/prisma/prisma.module';
+import { PrismaModule } from 'prisma/prisma.module';
 import { UserNotificationsController } from './user-notifications.controller';
 import { UserNotificationsService } from './user-notifications.service';
 

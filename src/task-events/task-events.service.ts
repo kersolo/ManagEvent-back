@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { PrismaService } from 'prisma/prisma.service';
 import { CreateTaskEventDto } from './dto/create-task-event.dto';
 import { UpdateTaskEventDto } from './dto/update-task-event.dto';
 
