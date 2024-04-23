@@ -1,0 +1,148 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  // id          Int      @id @default(autoincrement())
+  id            String      @id @default(uuid())
+  email         String   @unique
+  password      String   
+  role          RoleEnum @default(Volunteer)
+  lastConnexion DateTime @default(now())
+  refreshToken  String   @db.Text
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  userTaskEvent UserTaskEvent[]
+  userNotification UserNotification[]
+  userTask UserTask[]
+  profile Profile?
+}
+
+model Profile{
+  // id          Int      @id @default(autoincrement())
+  id          String   @id @default(uuid())
+  firstname   String
+  lastname    String
+  nickname    String
+  avatarUrl   String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  userId      String      @unique
+  user        User     @relation(fields: [userId], references:[id])
+}
+
+model Task{
+  // id          Int      @id @default(autoincrement())
+  id          String   @id @default(uuid())
+  name        String   @unique
+  description String
+  skillName   String
+  badgeUrl    String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  taskEvent   TaskEvent[]
+  userTaskEvent UserTaskEvent[]
+  userTask UserTask[]
+}
+
+model Event{
+  // id          Int      @id @default(autoincrement())
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  location    String
+  startDate   DateTime
+  endDate     DateTime
+  status      EventStatusEnum @default(Incomplete)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  taskEvent   TaskEvent[]
+  userTaskEvent UserTaskEvent[]
+}
+
+model Notification{
+  // id          Int      @id @default(autoincrement())
+  id          String   @id @default(uuid())
+  content     String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  userNotification UserNotification[]
+}
+
+model TaskEvent {
+  taskId          String     
+  eventId         String 
+  volunteerNumber Int @default(1)
+  needValidation  Boolean @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  task            Task    @relation(fields: [taskId], references: [id]) 
+  event           Event   @relation(fields: [eventId], references: [id])
+@@id([taskId, eventId])
+}
+
+model UserTaskEvent{
+  userId    String 
+  taskId      String     
+  eventId     String 
+  status      UserTaskEventStatusEnum @default(Validated)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  user        User   @relation(fields: [userId], references: [id])
+  task        Task   @relation(fields: [taskId], references: [id]) 
+  event       Event   @relation(fields: [eventId], references: [id])
+@@id([userId, taskId, eventId])
+}
+
+model UserNotification {
+  userId          String 
+  notificationId  String 
+  status          UserNotificationStatusEnum @default(NotRead)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  user            User   @relation(fields: [userId], references: [id])
+  notification    Notification   @relation(fields: [notificationId], references: [id])
+  @@id([userId, notificationId])
+}
+
+model UserTask {
+  userId     String 
+  taskId     String 
+  level      Int @default(1)
+  user       User   @relation(fields: [userId], references: [id])
+  task       Task   @relation(fields: [taskId], references: [id])
+  @@id([userId, taskId])
+}
+
+enum RoleEnum {
+  Volunteer
+  Admin
+  SuperAdmin
+}
+
+enum EventStatusEnum {
+  Complete
+  Incomplete
+}
+
+enum UserTaskEventStatusEnum {
+  Waiting
+  Validated
+  Refused
+}
+
+enum UserNotificationStatusEnum {
+  Read
+  NotRead
+}
