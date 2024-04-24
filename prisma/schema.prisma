@@ -14,54 +14,49 @@ datasource db {
 }
 
 model User {
-  // id          Int      @id @default(autoincrement())
-  id            String      @id @default(uuid())
-  email         String   @unique
-  password      String   
+  id            String   @id @default(uuid())
+  email         String   @unique @db.VarChar(100)
+  password      String   @db.VarChar(100)
   role          RoleEnum @default(Volunteer)
   lastConnexion DateTime @default(now())
-  refreshToken  String   @db.Text
+  refreshToken  String   @db.VarChar(255)
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
   userTaskEvent UserTaskEvent[]
   userNotification UserNotification[]
-  userTask UserTask[]
+  userBadge UserBadge[]
   profile Profile?
 }
 
 model Profile{
-  // id          Int      @id @default(autoincrement())
-  id          String   @id @default(uuid())
-  firstname   String
-  lastname    String
-  nickname    String
-  avatarUrl   String?
+  userId      String   @id @unique 
+  firstname   String   @db.VarChar(50)
+  lastname    String   @db.VarChar(50)
+  nickname    String   @db.VarChar(20)
+  avatarPath  String?  @db.VarChar(255)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-  userId      String      @unique
   user        User     @relation(fields: [userId], references:[id])
 }
 
 model Task{
-  // id          Int      @id @default(autoincrement())
-  id          String   @id @default(uuid())
-  name        String   @unique
-  description String
-  skillName   String
-  badgeUrl    String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  taskEvent   TaskEvent[]
-  userTaskEvent UserTaskEvent[]
-  userTask UserTask[]
+  id             Int      @id @default(autoincrement())
+  name           String   @unique @db.VarChar(30)
+  description    String   @db.Text()
+  skillName      String?  @db.VarChar(30)
+  skillBadgePath String?  @db.VarChar(255)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  taskEvent      TaskEvent[]
+  userTaskEvent  UserTaskEvent[]
+  userBadge UserBadge[]
 }
 
 model Event{
-  // id          Int      @id @default(autoincrement())
-  id          String   @id @default(uuid())
-  title       String
-  description String
-  location    String
+  id          Int      @id @default(autoincrement())
+  title       String   @db.VarChar(30)
+  description String   @db.Text()
+  adress      String   @db.VarChar(100)
   startDate   DateTime
   endDate     DateTime
   status      EventStatusEnum @default(Incomplete)
@@ -72,30 +67,29 @@ model Event{
 }
 
 model Notification{
-  // id          Int      @id @default(autoincrement())
-  id          String   @id @default(uuid())
-  content     String
+  id          Int      @id @default(autoincrement())
+  content     String   @db.VarChar(100)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   userNotification UserNotification[]
 }
 
 model TaskEvent {
-  taskId          String     
-  eventId         String 
-  volunteerNumber Int @default(1)
-  needValidation  Boolean @default(false)
+  taskId          Int     
+  eventId         Int 
+  volunteerNumber Int      @default(1) @db.SmallInt()
+  needValidation  Boolean  @default(false)
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
-  task            Task    @relation(fields: [taskId], references: [id]) 
-  event           Event   @relation(fields: [eventId], references: [id])
+  task            Task     @relation(fields: [taskId], references: [id]) 
+  event           Event    @relation(fields: [eventId], references: [id])
 @@id([taskId, eventId])
 }
 
 model UserTaskEvent{
-  userId    String 
-  taskId      String     
-  eventId     String 
+  userId      String 
+  taskId      Int     
+  eventId     Int 
   status      UserTaskEventStatusEnum @default(Validated)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -107,7 +101,7 @@ model UserTaskEvent{
 
 model UserNotification {
   userId          String 
-  notificationId  String 
+  notificationId  Int 
   status          UserNotificationStatusEnum @default(NotRead)
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
@@ -116,10 +110,10 @@ model UserNotification {
   @@id([userId, notificationId])
 }
 
-model UserTask {
+model UserBadge {
   userId     String 
-  taskId     String 
-  level      Int @default(1)
+  taskId     Int 
+  level      Int @default(1) @db.TinyInt()
   user       User   @relation(fields: [userId], references: [id])
   task       Task   @relation(fields: [taskId], references: [id])
   @@id([userId, taskId])
