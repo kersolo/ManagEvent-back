@@ -38,7 +38,7 @@ const createUsers = async (number: number): Promise<User[]> => {
       password: await bcrypt.hash('devPunk!', 10),
     },
   });
-  users.push(superAdmin);
+  users.push(superAdmin); // NE PAS PUSH SUPERADMIN dans la liste des users tu vas avoir des faux positifs plutôt tard
   return users;
 };
 
@@ -91,7 +91,7 @@ const createTasks = async (number: number): Promise<Task[]> => {
   const existingTaskNames = [];
   while (number) {
     const taskName = faker.lorem.word();
-    if (!existingTaskNames.includes(taskName)) {
+    if (!existingTaskNames.includes(taskName)) { // tu peux t'éviter ça en utisant la method upsert à la place de create 
       const task = await prisma.task.create({
         data: {
           name: taskName,
