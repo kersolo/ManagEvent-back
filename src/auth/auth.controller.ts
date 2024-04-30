@@ -62,7 +62,7 @@ export class AuthController {
     const token = await this.authService.createToken(
       { id: user.id, email: payload.email, role: user.role },
       process.env.SECRET_KEY,
-      1,
+      '3h',
     );
     const refreshToken = await this.authService.createToken(
       { id: user.id, email: payload.email, role: user.role },
