@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { RoleEnum } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
@@ -14,7 +15,7 @@ export class AuthService {
   }
 
   async createToken(
-    payload: { id: string; email: string },
+    payload: { id: string; email: string; role: RoleEnum },
     secret: string,
     expiration: string | number,
   ): Promise<string> {
