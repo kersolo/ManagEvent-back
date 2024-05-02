@@ -16,6 +16,17 @@ import * as bcrypt from 'bcrypt';
 
 const prisma = new PrismaClient();
 
+const createSuperAdminUser = async (): Promise<User> => {
+  const superAdmin = await prisma.user.create({
+    data: {
+      email: 'admin@mail.com',
+      role: RoleEnum.SuperAdmin,
+      refreshToken: faker.string.alpha(155),
+      password: await bcrypt.hash('devPunk!', 10),
+    },
+  });
+  return superAdmin;
+};
 const createUsers = async (number: number): Promise<User[]> => {
   const users: User[] = [];
   while (number) {
@@ -30,15 +41,6 @@ const createUsers = async (number: number): Promise<User[]> => {
     users.push(userVolunteer);
     number--;
   }
-  const superAdmin = await prisma.user.create({
-    data: {
-      email: 'admin@mail.com',
-      role: RoleEnum.SuperAdmin,
-      refreshToken: faker.string.alpha(155),
-      password: await bcrypt.hash('devPunk!', 10),
-    },
-  });
-  users.push(superAdmin); // NE PAS PUSH SUPERADMIN dans la liste des users tu vas avoir des faux positifs plutôt tard
   return users;
 };
 
@@ -88,22 +90,22 @@ const createEvents = async (number: number): Promise<Event[]> => {
 
 const createTasks = async (number: number): Promise<Task[]> => {
   const tasks: Task[] = [];
-  const existingTaskNames = [];
-  while (number) {
+  while (tasks.length < number) {
     const taskName = faker.lorem.word();
-    if (!existingTaskNames.includes(taskName)) { // tu peux t'éviter ça en utisant la method upsert à la place de create 
-      const task = await prisma.task.create({
-        data: {
-          name: taskName,
-          description: faker.lorem.lines(5),
-          skillName: faker.person.jobTitle().substring(0, 30),
-        },
-      });
-      existingTaskNames.push(taskName);
-      tasks.push(task);
-      number--;
-    }
+
+    const task = await prisma.task.upsert({
+      where: { name: taskName },
+      update: {},
+      create: {
+        name: taskName,
+        description: faker.lorem.lines(5),
+        skillName: faker.person.jobTitle().substring(0, 30),
+      },
+    });
+
+    tasks.push(task);
   }
+
   return tasks;
 };
 
@@ -342,6 +344,7 @@ const createUserNotifications = async (
 };
 
 async function bootstrap() {
+  await createSuperAdminUser();
   const users = await createUsers(10);
   await createUserProfiles(users);
   const events = await createEvents(10);
