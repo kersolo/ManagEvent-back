@@ -8,10 +8,10 @@ import { ProfilesModule } from './profiles/profiles.module';
 import { TaskEventsModule } from './task-events/task-events.module';
 import { TasksModule } from './tasks/tasks.module';
 import { UserNotificationsModule } from './user-notifications/user-notifications.module';
-import { UserTaskEventsModule } from './user-task-events/user-task-events.module';
-import { UserTasksModule } from './user-tasks/user-tasks.module';
+
 import { UsersModule } from './users/users.module';
 import { UserBadgesModule } from './user-badges/user-badges.module';
+import { UserTaskEventsModule } from './user-task-events/user-task-events.module';
 
 @Module({
   imports: [
@@ -24,7 +24,6 @@ import { UserBadgesModule } from './user-badges/user-badges.module';
     TaskEventsModule,
     UserTaskEventsModule,
     UserNotificationsModule,
-    UserTasksModule,
     UserBadgesModule,
   ],
   controllers: [AppController],
