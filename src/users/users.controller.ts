@@ -18,7 +18,7 @@ import { User } from '@prisma/client';
 
 @ApiBearerAuth()
 @ApiTags("Users")
-//@UseGuards(AuthGuard)
+//@UseGuards(AuthGuard) a remettre lors de la phase sécurisation de l'appli
 @Controller('users')
 export class UsersController {
     constructor(private readonly usersService: UsersService) { }
