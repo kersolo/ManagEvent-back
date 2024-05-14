@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, HttpException, HttpStatus } from '@nestjs/common';
 import { TasksService } from './tasks.service';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
@@ -23,7 +23,7 @@ export class TasksController {
 
         const TaskId = await this.tasksService.findOne(+id)
         if (!TaskId) {
-            return { message: "Cette tâche n'existe pas" }
+            throw new HttpException("Task not found", HttpStatus.NOT_FOUND);
         }
         return this.tasksService.findOne(+id);
     }
@@ -33,7 +33,7 @@ export class TasksController {
 
         const TaskId = await this.tasksService.findOne(+id)
         if (!TaskId) {
-            return { message: "Cette tâche n'existe pas" }
+            throw new HttpException("Task not found", HttpStatus.NOT_FOUND);
         }
         return await this.tasksService.update(+id, data);
     }
@@ -43,7 +43,7 @@ export class TasksController {
         
         const TaskId = await this.tasksService.findOne(+id)
         if (!TaskId) {
-            return { message: "Cette tâche n'existe pas" }
+            throw new HttpException("Task not found", HttpStatus.NOT_FOUND);
         }
         await this.tasksService.remove(+id);
         return { message: "Tâche supprimée" }

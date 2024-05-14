@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, HttpException, HttpStatus } from '@nestjs/common';
 import { UserTaskEventsService } from './user-task-events.service';
 import { CreateUserTaskEventDto } from './dto/create-user-task-event.dto';
 import { UpdateUserTaskEventDto } from './dto/update-user-task-event.dto';
@@ -22,7 +22,7 @@ export class UserTaskEventsController {
 
         const UserTaskEventId = await this.userTaskEventsService.findOne(+id)
         if (!UserTaskEventId) {
-            return { message: " UserTaskEvent Not found" }
+            throw new HttpException("UserTaskEventnot found", HttpStatus.NOT_FOUND);
         }
         return await this.userTaskEventsService.findOne(+id);
     }
@@ -32,7 +32,7 @@ export class UserTaskEventsController {
 
         const UserTaskEventId = await this.userTaskEventsService.findOne(+id)
         if (!UserTaskEventId) {
-            return { message: " UserTaskEvent Not found" }
+            throw new HttpException("UserTaskEventnot found", HttpStatus.NOT_FOUND);
         }
         return this.userTaskEventsService.update(+id, updateUserTaskEventDto);
     }
@@ -42,7 +42,7 @@ export class UserTaskEventsController {
 
         const UserTaskEventId = await this.userTaskEventsService.findOne(+id)
         if (!UserTaskEventId) {
-            return { message: " UserTaskEvent Not found" }
+            throw new HttpException("UserTaskEventnot found", HttpStatus.NOT_FOUND);
         }
         await this.userTaskEventsService.remove(+id);
         return {message:"UserTaskEvent deleted"}

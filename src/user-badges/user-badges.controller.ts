@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, HttpException, HttpStatus } from '@nestjs/common';
 import { UserBadgesService } from './user-badges.service';
 import { CreateUserBadgeDto } from './dto/create-user-badge.dto';
 import { UpdateUserBadgeDto } from './dto/update-user-badge.dto';
@@ -24,7 +24,7 @@ export class UserBadgesController {
 
         const userBadgesId = await this.userBadgesService.findOne(+id)
         if (!userBadgesId) {
-            return { message: "Ce bagde n'existe pas" }
+            throw new HttpException("UserBadge not found", HttpStatus.NOT_FOUND);
         }
         return await this.userBadgesService.findOne(+id);
     }
@@ -34,7 +34,7 @@ export class UserBadgesController {
 
         const userBadgesId = await this.userBadgesService.findOne(+id)
         if (!userBadgesId) {
-            return { message: "Ce bagde n'existe pas" }
+            throw new HttpException("userbadge not found", HttpStatus.NOT_FOUND);
         }
         return await this.userBadgesService.update(+id, data);
     }
@@ -44,9 +44,9 @@ export class UserBadgesController {
      
         const userBadgesId = await this.userBadgesService.findOne(+id)
         if (!userBadgesId) {
-            return { message: "Ce bagde n'existe pas" }
+            throw new HttpException("UserBadge not found", HttpStatus.NOT_FOUND);
         }
         await this.userBadgesService.remove(+id);
-        return { message: "Bagde  supprimé" }
+        return { message: "Bagde deleted" }
     }
 }

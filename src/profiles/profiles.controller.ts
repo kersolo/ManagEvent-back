@@ -23,7 +23,7 @@ export class ProfilesController {
 
     @Get(':id')
     async findOne(@Param('id',) userId: string): Promise<Profile> {
-        return this.profilesService.findOne(userId);
+        return await this.profilesService.findOne(userId);
     }
 
     @Patch(':id')

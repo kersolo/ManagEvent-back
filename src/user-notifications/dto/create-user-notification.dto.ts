@@ -11,9 +11,9 @@ export class CreateUserNotificationDto {
 
     @ApiProperty()
     @IsNotEmpty()
-    notificationId: number
+    notificationId: number;
 
     @ApiProperty()
     @IsNotEmpty()
-    status: UserNotificationStatusEnum
+    status: UserNotificationStatusEnum;
 }

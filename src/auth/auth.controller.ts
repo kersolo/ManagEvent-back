@@ -89,7 +89,7 @@ export class AuthController {
 
         const user = await this.usersService.findOneByEmail(payload.email);
         if (!user) {
-            throw new HttpException("User not found", HttpStatus.FORBIDDEN);
+            throw new HttpException("User not found", HttpStatus.NOT_FOUND);
         }
 
         const code = speakeasy.totp({
@@ -110,7 +110,7 @@ export class AuthController {
 
         const user = await this.usersService.findOneByEmail(payload.email);
         if (!user) {
-            throw new HttpException("User not found", HttpStatus.FORBIDDEN);
+            throw new HttpException("User not found", HttpStatus.NOT_FOUND);
         }
         // on vérifie la validité du code qu'il nous a renvoyé 
         const isMatch = speakeasy.totp.verify({
@@ -132,19 +132,20 @@ export class AuthController {
 
         });
         // url au front 
-       // const url = "http://localhost:3000/auth/reset-password"
+        // const url = "http://localhost:3000/auth/reset-password"
         await this.authService.sendMailResetPassword(payload.email);
 
         return { user: updated_user }
     }
-        
+
     @UseGuards(AuthGuard)
     @ApiBearerAuth()// pour la doc pour préciser que la route est protégée
     @Delete('delete-account')
-    deleteAccount(@Req() request: RequestWithUser) {
+    async deleteAccount(@Req() request: RequestWithUser): Promise<{message: string}> {
         const userId = request.user.id;
         // console.log("🚀 ~ AuthController ~ deleteAccount ~ userId:", userId)
-        return this.usersService.remove(userId);
+        await this.usersService.remove(userId);
+        return {message: "Utilisateur supprimé "}
     }
 
     @UseGuards(AuthRefreshGuard)
@@ -162,7 +163,9 @@ export class AuthController {
             req.refreshToken,
             user.refreshToken,
         );
-        if (!isMatched) throw new HttpException('Bad token', 404);
+        if (!isMatched) {
+            throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+        } 
 
         // create new token // refreshToken
         const token = await this.authService.createToken(

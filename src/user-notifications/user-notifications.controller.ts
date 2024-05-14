@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, HttpException, HttpStatus } from '@nestjs/common';
 import { UserNotificationsService } from './user-notifications.service';
 import { CreateUserNotificationDto } from './dto/create-user-notification.dto';
 import { UpdateUserNotificationDto } from './dto/update-user-notification.dto';
@@ -24,7 +24,7 @@ export class UserNotificationsController {
         const UserNotificationId = await this.userNotificationsService.findOne(+id);
 
         if (!UserNotificationId) {
-            return { message: "cette notification de l'user n'existe pas" }
+            throw new HttpException("UserNotification not found", HttpStatus.NOT_FOUND);
         }
         return await this.userNotificationsService.findOne(+id);
     }
@@ -35,7 +35,7 @@ export class UserNotificationsController {
         const UserNotificationId = await this.userNotificationsService.findOne(+id);
 
         if (!UserNotificationId) {
-            return { message: "userNotif not found" }
+            throw new HttpException("UserNotification not found", HttpStatus.NOT_FOUND);
         }
         return this.userNotificationsService.update(+id, updateUserNotificationDto);
     }
@@ -45,9 +45,9 @@ export class UserNotificationsController {
         const UserNotificationId = await this.userNotificationsService.findOne(+id);
 
         if (!UserNotificationId) {
-            return { message: "cette notification de l'user n'existe pas" }
+            throw new HttpException("UserNotification not found", HttpStatus.NOT_FOUND);
         }
         await this.userNotificationsService.remove(+id);
-        return { message: "userNotif" + " " +id + "supprimée" }
+        return { message: "UserNotification" + " " +id + "deleted" }
     }
 }

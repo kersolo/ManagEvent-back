@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, HttpException, HttpStatus } from '@nestjs/common';
 import { EventsService } from './events.service';
 import { CreateEventDto } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
@@ -26,7 +26,7 @@ export class EventsController {
 
         const eventId = await this.eventsService.findOne(+id)
         if (!eventId) {
-            return { message: "Cet évènement n'existe pas" }
+            throw new HttpException("Event not found", HttpStatus.NOT_FOUND);
         }
         return await this.eventsService.findOne(+id);
     }
@@ -36,7 +36,7 @@ export class EventsController {
 
         const eventId = await this.eventsService.findOne(id)
         if (!eventId) {
-            return { message: "Cet évènement ne peut être modifié car il n'existe pas" }
+            throw new HttpException("Event not found", HttpStatus.NOT_FOUND);
         }
         await this.eventsService.update(id, data);
         return { message: 'Evènement' + ' ' + id + ' modifiée' }
@@ -48,7 +48,7 @@ export class EventsController {
 
         const eventId = await this.eventsService.findOne(id)
         if (!eventId) {
-            return { message: "Cet évènement n'existe pas" }
+            throw new HttpException("Event not found", HttpStatus.NOT_FOUND);
         }
         await this.eventsService.remove(id);
         return { message: 'Evènement' + ' ' + ' supprimé' };

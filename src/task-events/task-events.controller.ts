@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, HttpException, HttpStatus } from '@nestjs/common';
 import { TaskEventsService } from './task-events.service';
 import { CreateTaskEventDto } from './dto/create-task-event.dto';
 import { UpdateTaskEventDto } from './dto/update-task-event.dto';
@@ -28,7 +28,7 @@ export class TaskEventsController {
 
         const TaskEventId = await this.taskEventsService.findOne(id)
         if (!TaskEventId) {
-            return { message: "Cette mission ne peut être modifiée car elle n'existe pas" }
+            throw new HttpException("TaskEventId not found", HttpStatus.NOT_FOUND);
         }
         return await this.taskEventsService.update(id, updateTaskEventDto);
     }

@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, HttpException, HttpStatus } from '@nestjs/common';
 import { NotificationsService } from './notifications.service';
 import { CreateNotificationDto } from './dto/create-notification.dto';
 import { UpdateNotificationDto } from './dto/update-notification.dto';
@@ -24,7 +24,7 @@ export class NotificationsController {
 
         const notifId = await this.notificationsService.findOne(id)
         if (!notifId) {
-            return { message: "Cette notif n'existe pas" }
+            throw new HttpException("Notification not found", HttpStatus.NOT_FOUND);
         }
         return await this.notificationsService.findOne(id);
     }
@@ -33,10 +33,10 @@ export class NotificationsController {
     async update(@Param('id', ParseIntPipe) id: number, @Body() data: UpdateNotificationDto): Promise<Notification | { message: string }> {
         const notifId = await this.notificationsService.findOne(id)
         if (!notifId) {
-            return { message: "Cette notif ne peut être modifié car elle n'existe pas" }
+            throw new HttpException("Notification not found", HttpStatus.NOT_FOUND);
         }
         await this.notificationsService.update(id, data);
-        return { message: "Notif modifiée" };
+        return { message: "Notification updted" };
     }
 
     @Delete(':id')
@@ -44,10 +44,10 @@ export class NotificationsController {
 
         const notificationId = await this.notificationsService.findOne(id)
         if (!notificationId) {
-            return { message: "Cette notif n'existe pas" }
+            throw new HttpException("Notification not found", HttpStatus.NOT_FOUND);
         }
         await this.notificationsService.remove(id);
-        return { message: "Notif" + " " + id + " supprimée" };
+        return { message: "Notification" + " " + id + " deleted" };
     }
 
 }
