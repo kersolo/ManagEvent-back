@@ -1,29 +1,54 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from 'prisma/prisma.service';
 import { CreateProfileDto } from './dto/create-profile.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
+import { Profile } from '@prisma/client';
+
 
 @Injectable()
 export class ProfilesService {
-  constructor(private readonly prismaService: PrismaService) {}
 
-  create(createProfileDto: CreateProfileDto) {
-    return 'This action adds a new profile';
-  }
+    readonly includeDefault = {
+        user: {
+            select: {
+                email: true,
+                lastConnexion: true,
+            }
+        }
+    }
 
-  findAll() {
-    return `This action returns all profiles`;
-  }
+    constructor(private readonly prismaService: PrismaService) { }
 
-  findOne(id: number) {
-    return `This action returns a #${id} profile`;
-  }
+    async create(createProfileDto: CreateProfileDto): Promise<Profile> {
+        return await this.prismaService.profile.create({
+            data: createProfileDto
+        });
+    }
 
-  update(id: number, updateProfileDto: UpdateProfileDto) {
-    return `This action updates a #${id} profile`;
-  }
+    async findAll(): Promise<Profile[]> {
+        return await this.prismaService.profile.findMany({
+            orderBy: { createdAt: "desc" },
+            include: this.includeDefault
+        });
+    }
 
-  remove(id: number) {
-    return `This action removes a #${id} profile`;
-  }
+    async findOne(userId: string): Promise<Profile> {
+        return this.prismaService.profile.findUnique({
+            where: { userId },
+            include: this.includeDefault
+        });
+    }
+
+    async update(userId: string, updateProfileDto: UpdateProfileDto): Promise<Profile> {
+        return await this.prismaService.profile.update({
+            where: { userId },
+            data: {...updateProfileDto}
+        });
+    }
+
+    async remove(userId: string): Promise<Profile> {
+        return this.prismaService.profile.delete({
+            where: { userId }
+        });
+    }
 }

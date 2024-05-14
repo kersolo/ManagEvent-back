@@ -2,28 +2,63 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'prisma/prisma.service';
 import { CreateTaskEventDto } from './dto/create-task-event.dto';
 import { UpdateTaskEventDto } from './dto/update-task-event.dto';
+import { TaskEvent } from '@prisma/client';
 
 @Injectable()
 export class TaskEventsService {
-  constructor(private readonly prismaService: PrismaService) {}
+     
+    readonly includeDefault = {
+        task: {
+            select: {
+                name: true,
+                description : true,
+                skillName: true,
+            }
+        },
+        event: {
+            select: {
+                title: true,
+                description: true,
+                adress: true,
+                startDate: true,
+                endDate: true,
+                status : true
+            }
+        }
+    }
 
-  create(createTaskEventDto: CreateTaskEventDto) {
-    return 'This action adds a new taskEvent';
-  }
+    constructor(private readonly prismaService: PrismaService) { }
 
-  findAll() {
-    return `This action returns all taskEvents`;
-  }
+  async  create(createTaskEventDto: CreateTaskEventDto): Promise<TaskEvent> {
+      return await this.prismaService.taskEvent.create({
+            data: createTaskEventDto
+        });
+    }
 
-  findOne(id: number) {
-    return `This action returns a #${id} taskEvent`;
-  }
+   async  findAll(): Promise<TaskEvent[]> {
+        return await this.prismaService.taskEvent.findMany({
+            orderBy: { createdAt: "desc" },
+            include: this.includeDefault
+        });
+    }
 
-  update(id: number, updateTaskEventDto: UpdateTaskEventDto) {
-    return `This action updates a #${id} taskEvent`;
-  }
+  async findOne(id: number): Promise<TaskEvent> {
+        return  await this.prismaService.taskEvent.findUnique({
+            where: { id },
+            include: this.includeDefault
+        });
+    }
 
-  remove(id: number) {
-    return `This action removes a #${id} taskEvent`;
-  }
+   async update(id: number, updateTaskEventDto: UpdateTaskEventDto): Promise<TaskEvent> {
+       return await this.prismaService.taskEvent.update({
+           where: { id },
+           data: { ...updateTaskEventDto}
+        });
+    }
+
+   async remove(id: number): Promise<TaskEvent> {
+       return await this.prismaService.taskEvent.delete({
+            where: {id}
+        });
+    }
 }

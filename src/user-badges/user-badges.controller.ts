@@ -2,33 +2,51 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { UserBadgesService } from './user-badges.service';
 import { CreateUserBadgeDto } from './dto/create-user-badge.dto';
 import { UpdateUserBadgeDto } from './dto/update-user-badge.dto';
+import { UserBadge } from '@prisma/client';
+
 
 @Controller('user-badges')
 export class UserBadgesController {
-  constructor(private readonly userBadgesService: UserBadgesService) {}
+    constructor(private readonly userBadgesService: UserBadgesService) { }
 
-  @Post()
-  create(@Body() createUserBadgeDto: CreateUserBadgeDto) {
-    return this.userBadgesService.create(createUserBadgeDto);
-  }
+    @Post()
+    async create(@Body() createUserBadgeDto: CreateUserBadgeDto): Promise<UserBadge> {
+        return await this.userBadgesService.create(createUserBadgeDto);
+    }
 
-  @Get()
-  findAll() {
-    return this.userBadgesService.findAll();
-  }
+    @Get()
+    async findAll(): Promise<UserBadge[]> {
+        return await this.userBadgesService.findAll();
+    }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.userBadgesService.findOne(+id);
-  }
+    @Get(':id')
+    async findOne(@Param('id') id: string): Promise<UserBadge | { message: string }> {
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserBadgeDto: UpdateUserBadgeDto) {
-    return this.userBadgesService.update(+id, updateUserBadgeDto);
-  }
+        const userBadgesId = await this.userBadgesService.findOne(+id)
+        if (!userBadgesId) {
+            return { message: "Ce bagde n'existe pas" }
+        }
+        return await this.userBadgesService.findOne(+id);
+    }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.userBadgesService.remove(+id);
-  }
+    @Patch(':id')
+    async update(@Param('id') id: string, @Body() data: UpdateUserBadgeDto): Promise<UserBadge | { message: string }> {
+
+        const userBadgesId = await this.userBadgesService.findOne(+id)
+        if (!userBadgesId) {
+            return { message: "Ce bagde n'existe pas" }
+        }
+        return await this.userBadgesService.update(+id, data);
+    }
+
+    @Delete(':id')
+    async delete(@Param('id') id: string): Promise<UserBadge | { message: string }> {
+     
+        const userBadgesId = await this.userBadgesService.findOne(+id)
+        if (!userBadgesId) {
+            return { message: "Ce bagde n'existe pas" }
+        }
+        await this.userBadgesService.remove(+id);
+        return { message: "Bagde  supprimé" }
+    }
 }

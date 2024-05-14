@@ -6,31 +6,72 @@ import { User } from '@prisma/client';
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly prismaService: PrismaService) {}
-  async create(createUserDto: CreateUserDto) {
-    return await this.prismaService.user.create({ data: createUserDto });
-  }
 
-  findAll() {
-    return `This action returns all users`;
-  }
+    readonly includeDefault = {
+        profile: {
+            select: {
+                firstname: true,
+                lastname: true,
+                nickname: true,
+                avatarPath: true,
+                createdAt: true,
+                updatedAt: true
+            }
+        },
+        userTaskEvent: {
+            select: {
+                status: true
+            }
+        },
+        userNotification: {
+            select: {
+                status: true
+            }
+        },
+        userBadge: {
+            select: {
+                level: true
+            }
+        }
+    }
 
-  async findOneByEmail(email: string): Promise<User> {
-    return await this.prismaService.user.findUnique({ where: { email } });
-  }
+    constructor(private readonly prismaService: PrismaService) { }
 
-  async findOneById(id: string) {
-    return await this.prismaService.user.findUnique({ where: { id } });
-  }
+    async create(createUserDto: CreateUserDto): Promise<User> {
+        return await this.prismaService.user.create({
+            data: createUserDto
+        });
+    }
 
-  update(id: string, updateUserDto: UpdateUserDto) {
-    return this.prismaService.user.update({
-      where: { id },
-      data: updateUserDto,
-    });
-  }
+    async findAll(): Promise<User[]> {
+        return await this.prismaService.user.findMany({
+            orderBy: { createdAt: "desc" },
+            include: this.includeDefault
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
-  }
+        });
+    }
+
+    async findOneByEmail(email: string): Promise<User> {
+        return await this.prismaService.user.findUnique({ where: { email } });
+    }
+
+    async findOneById(id: string): Promise<User> {
+        return await this.prismaService.user.findUnique({
+            where: { id },
+            include: this.includeDefault
+        });
+    }
+
+    async update(id: string, updateUserDto: UpdateUserDto): Promise<User> {
+        return await this.prismaService.user.update({
+            where: { id },
+            data: { ...updateUserDto },
+        });
+    }
+
+    async remove(id: string): Promise<User> {
+        return await this.prismaService.user.delete({
+            where: { id },
+        });
+    }
 }

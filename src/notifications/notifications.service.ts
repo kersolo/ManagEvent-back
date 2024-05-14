@@ -1,29 +1,52 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from 'prisma/prisma.service';
 import { CreateNotificationDto } from './dto/create-notification.dto';
 import { UpdateNotificationDto } from './dto/update-notification.dto';
-
+import { Notification } from '@prisma/client';
 @Injectable()
 export class NotificationsService {
-  constructor(private readonly prismaService: PrismaService) {}
 
-  create(createNotificationDto: CreateNotificationDto) {
-    return 'This action adds a new notification';
-  }
+    readonly includeDefault = {
+        userNotification: {
+            select: {
+                userId: true,
+                status : true
+            }
+        }
+    }
 
-  findAll() {
-    return `This action returns all notifications`;
-  }
+    constructor(private readonly prismaService: PrismaService) { }
 
-  findOne(id: number) {
-    return `This action returns a #${id} notification`;
-  }
+    async create(createNotificationDto: CreateNotificationDto): Promise<Notification> {
+        return await this.prismaService.notification.create({
+            data: createNotificationDto
+        });
+    }
 
-  update(id: number, updateNotificationDto: UpdateNotificationDto) {
-    return `This action updates a #${id} notification`;
-  }
+    async findAll(): Promise<Notification[]> {
+        return await this.prismaService.notification.findMany({
+            orderBy: { createdAt: "desc" },
+            include: this.includeDefault
+        });
+    }
 
-  remove(id: number) {
-    return `This action removes a #${id} notification`;
-  }
+   async findOne(id: number): Promise<Notification> {
+        return await this.prismaService.notification.findUnique({
+            where: { id },
+            include: this.includeDefault
+        });
+    }
+
+   async update(id: number, updateNotificationDto: UpdateNotificationDto): Promise<Notification> {
+        return await this.prismaService.notification.update({
+            where: { id },
+            data: { ...updateNotificationDto}
+        });
+    }
+
+    async remove(id: number): Promise<Notification>  {
+        return  await this.prismaService.notification.delete({
+            where: { id }
+        });
+    }
 }

@@ -1,26 +1,59 @@
 import { Injectable } from '@nestjs/common';
 import { CreateUserBadgeDto } from './dto/create-user-badge.dto';
 import { UpdateUserBadgeDto } from './dto/update-user-badge.dto';
+import { PrismaService } from 'prisma/prisma.service';
+import { UserBadge } from '@prisma/client';
 
 @Injectable()
 export class UserBadgesService {
-  create(createUserBadgeDto: CreateUserBadgeDto) {
-    return 'This action adds a new userBadge';
-  }
 
-  findAll() {
-    return `This action returns all userBadges`;
-  }
+    readonly includeDefault = {
+        user: {
+            select: {
+                email: true,
+                role: true
+            }
+        },
+        task: {
+            select: {
+                description: true,
+                skillName: true,
+                skillBadgePath: true
+            }
+        }
+    }
 
-  findOne(id: number) {
-    return `This action returns a #${id} userBadge`;
-  }
+    constructor(private readonly prismaService: PrismaService) { }
 
-  update(id: number, updateUserBadgeDto: UpdateUserBadgeDto) {
-    return `This action updates a #${id} userBadge`;
-  }
+    async create(createUserBadgeDto: CreateUserBadgeDto): Promise<UserBadge> {
+        return await this.prismaService.userBadge.create({
+            data: createUserBadgeDto
+        });
+    }
 
-  remove(id: number) {
-    return `This action removes a #${id} userBadge`;
-  }
+    async findAll(): Promise<UserBadge[]> {
+        return await this.prismaService.userBadge.findMany({
+            include: this.includeDefault
+        });
+    }
+
+    async findOne(id: number): Promise<UserBadge> {
+        return await this.prismaService.userBadge.findUnique({
+            where: { id },
+            include: this.includeDefault
+        });
+    }
+
+    async update(id: number, updateUserBadgeDto: UpdateUserBadgeDto): Promise<UserBadge> {
+        return await this.prismaService.userBadge.update({
+            where: { id },
+            data: updateUserBadgeDto
+        });
+    }
+
+  async remove(id: number):Promise<UserBadge> {
+      return this.prismaService.userBadge.delete({
+            where: { id }
+        });
+    }
 }

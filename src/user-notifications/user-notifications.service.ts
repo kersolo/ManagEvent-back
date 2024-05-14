@@ -2,28 +2,57 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'prisma/prisma.service';
 import { CreateUserNotificationDto } from './dto/create-user-notification.dto';
 import { UpdateUserNotificationDto } from './dto/update-user-notification.dto';
+import { UserNotification } from '@prisma/client';
+
 
 @Injectable()
 export class UserNotificationsService {
-  constructor(private readonly prismaService: PrismaService) {}
 
-  create(createUserNotificationDto: CreateUserNotificationDto) {
-    return 'This action adds a new userNotification';
-  }
+    readonly includeDefault = {
+        user: {
+            select: {
+                email: true,
+                role: true,
+            }
+        },
+        notification: {
+            select: {
+                content: true
+            }
+        }
+    }
+    constructor(private readonly prismaService: PrismaService) { }
 
-  findAll() {
-    return `This action returns all userNotifications`;
-  }
+    async create(createUserNotificationDto: CreateUserNotificationDto): Promise<UserNotification> {
+        return await this.prismaService.userNotification.create({
+            data: createUserNotificationDto
+        });
+    }
 
-  findOne(id: number) {
-    return `This action returns a #${id} userNotification`;
-  }
+    async findAll(): Promise<UserNotification[]> {
+        return await this.prismaService.userNotification.findMany({
+            orderBy: { createdAt: "desc" },
+            include: this.includeDefault
+        });
+    }
 
-  update(id: number, updateUserNotificationDto: UpdateUserNotificationDto) {
-    return `This action updates a #${id} userNotification`;
-  }
+    async findOne(id: number): Promise<UserNotification> {
+        return await this.prismaService.userNotification.findUnique({
+            where: { id },
+            include: this.includeDefault
+        });
+    }
 
-  remove(id: number) {
-    return `This action removes a #${id} userNotification`;
-  }
+    async update(id: number, updateUserNotificationDto: UpdateUserNotificationDto): Promise<UserNotification> {
+        return await this.prismaService.userNotification.update({
+            where: { id },
+            data: { ...updateUserNotificationDto }
+        });
+    }
+
+   async remove(id: number): Promise<UserNotification> {
+       return await this.prismaService.userNotification.delete({
+            where: { id }
+        });
+    }
 }
