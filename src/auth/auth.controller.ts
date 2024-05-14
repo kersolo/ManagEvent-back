@@ -34,13 +34,10 @@ export class AuthController {
     @Post('register')
     async register(@Body() payload: RegisterDto) {
 
-        const { email, password } = payload
-
         const user = await this.usersService.findOneByEmail(payload.email);
         if (user) {
             throw new HttpException('User already exists, please login', HttpStatus.FORBIDDEN);
         }
-
         payload.password = await this.authService.hash(payload.password);
 
         const newUser = await this.usersService.create(payload);
@@ -58,7 +55,6 @@ export class AuthController {
         if (!user) {
             throw new HttpException('Bad credentials', HttpStatus.FORBIDDEN);
         }
-
         //compare password
         const isMatch = await this.authService.compare(
             payload.password,
@@ -68,7 +64,6 @@ export class AuthController {
         if (!isMatch) {
             throw new HttpException('Bad credentials', HttpStatus.UNAUTHORIZED);
         }
-
         // create token
         const token = await this.authService.createToken(
             { id: user.id, email: payload.email, role: user.role },
@@ -82,7 +77,6 @@ export class AuthController {
         );
 
         //  const hashedRefresh = await this.authService.hash(refreshToken);
-
         const updated_user = await this.usersService.update(user.id, {
             refreshToken: refreshToken,
         });
@@ -137,7 +131,6 @@ export class AuthController {
             password: payload.password,
 
         });
-
         // url au front 
        // const url = "http://localhost:3000/auth/reset-password"
         await this.authService.sendMailResetPassword(payload.email);
@@ -184,7 +177,6 @@ export class AuthController {
         );
 
         // const hashedRefresh = await this.authService.hash(refreshToken);
-
         const updated_user = await this.usersService.update(user.id, {
             refreshToken: refreshToken,
         });
