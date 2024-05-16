@@ -2,10 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { RoleEnum } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
+import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class AuthService {
-  constructor(private jwtService: JwtService) {}
+  constructor(
+    private jwtService: JwtService,
+    private userService: UsersService,
+  ) {}
   async hash(password: string): Promise<string> {
     return bcrypt.hash(password, 10);
   }
@@ -23,5 +27,15 @@ export class AuthService {
       secret,
       expiresIn: expiration,
     });
+  }
+
+  async isTokenValid(token: string): Promise<boolean> {
+    const payload = await this.jwtService.verifyAsync(token, {
+      secret: process.env.RESET_PASS_SECRET_KEY,
+    });
+    if (!payload) {
+      return false;
+    }
+    return true;
   }
 }
