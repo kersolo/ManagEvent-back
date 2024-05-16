@@ -27,7 +27,10 @@ export class UsersController {
 
   @Get(':id')
   @UseGuards(AuthGuard)
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id') id: string, @Req() request: RequestWithUser) {
+    if (request.user.role === 'Volunteer' && request.user.id !== id) {
+      throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+    }
     return this.usersService.findOneById(id);
   }
 
@@ -43,6 +46,8 @@ export class UsersController {
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);
     }
     if (
+      (updateUserDto.role && request.user.role !== 'SuperAdmin') ||
+      (updateUserDto.refreshToken && request.user.id !== id) ||
       (userToUpdate.role === 'SuperAdmin' &&
         request.user.role !== 'SuperAdmin') ||
       (userToUpdate.role === 'Admin' &&
