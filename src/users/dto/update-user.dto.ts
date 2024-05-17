@@ -1,18 +1,15 @@
+import { PartialType } from '@nestjs/swagger';
 import { RoleEnum } from '@prisma/client';
-import { IsEmail, IsNotEmpty, IsOptional } from 'class-validator';
+import { IsOptional } from 'class-validator';
+import { CreateUserDto } from './create-user.dto';
 
-export class UpdateUserDto {
-  @IsNotEmpty()
-  @IsEmail()
-  @IsOptional()
-  email?: string;
-  @IsNotEmpty()
-  @IsOptional()
-  password?: string;
+export class UpdateUserDto extends PartialType(CreateUserDto) {
   @IsOptional()
   refreshToken?: string;
+
   @IsOptional()
   role?: RoleEnum;
+
   @IsOptional()
   resetPassToken?: string;
 }

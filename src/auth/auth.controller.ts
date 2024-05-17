@@ -137,7 +137,7 @@ export class AuthController {
     await this.userService.update(user.id, {
       resetPassToken: hashResetPassToken,
     });
-    //TODO : send email to user.email with link : /api/finalize-reset-password/{ResetPassToken}
+    //TODO : send email to user.email with link : "http://.../api/finalize-reset-password/{ResetPassToken}" + préciser validité du lien 1h
     return { message: 'Link send by email' };
   }
 
@@ -151,7 +151,7 @@ export class AuthController {
     if (!isValid) {
       throw new HttpException('Invalid Token', 401);
     }
-    //TODO : get user name (profileByUserId) and return it
+    //TODO eventuel : get user firstname (depuis profileByUserId) and return it
     return { message: 'Success' };
   }
 

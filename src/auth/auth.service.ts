@@ -2,14 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { RoleEnum } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
-import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class AuthService {
-  constructor(
-    private jwtService: JwtService,
-    private userService: UsersService,
-  ) {}
+  constructor(private jwtService: JwtService) {}
   async hash(password: string): Promise<string> {
     return bcrypt.hash(password, 10);
   }
