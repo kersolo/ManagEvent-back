@@ -6,12 +6,12 @@ import { Event } from '@prisma/client';
 import { ApiTags } from '@nestjs/swagger';
 
 
-@ApiTags("Authenfication")
+@ApiTags("Events")
 @Controller('events')
 export class EventsController {
     constructor(private readonly eventsService: EventsService) { }
 
-    @Post()
+    @Post('create')
     async create(@Body() createEventDto: CreateEventDto): Promise<Event> {
         return await this.eventsService.create(createEventDto);
     }
