@@ -14,6 +14,7 @@ import { UsersService } from './users.service';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { User } from '@prisma/client';
+import { CreateUserDto } from './dto/create-user.dto';
 
 
 @ApiBearerAuth()
@@ -44,7 +45,8 @@ export class UsersController {
     }
 
     /* @Delete(':id')
-     remove(@Param('id') id: string) {
+     remove(@Param('id') id: string, @Body() data: CreateUserDto) {
+      
          return this.usersService.remove(id);
      }*/
 }
