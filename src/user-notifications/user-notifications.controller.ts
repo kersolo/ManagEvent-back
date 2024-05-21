@@ -1,9 +1,11 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, HttpException, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, HttpException, HttpStatus, UseGuards } from '@nestjs/common';
 import { UserNotificationsService } from './user-notifications.service';
 import { CreateUserNotificationDto } from './dto/create-user-notification.dto';
 import { UpdateUserNotificationDto } from './dto/update-user-notification.dto';
 import { UserNotification } from '@prisma/client';
+import { AuthGuard } from 'src/auth/guards/auth.guard';
 
+@UseGuards(AuthGuard)
 @Controller('user-notifications')
 export class UserNotificationsController {
     constructor(private readonly userNotificationsService: UserNotificationsService) { }
@@ -41,13 +43,12 @@ export class UserNotificationsController {
     }
 
     @Delete(':id')
-    async delete(@Param('id') id: string):Promise<UserNotification | { message: string }> {
+    async delete(@Param('id') id: string): Promise<UserNotification | { message: string }> {
         const UserNotificationId = await this.userNotificationsService.findOne(+id);
 
         if (!UserNotificationId) {
             throw new HttpException("UserNotification not found", HttpStatus.NOT_FOUND);
         }
-        await this.userNotificationsService.remove(+id);
-        return { message: "UserNotification" + " " +id + "deleted" }
+        return await this.userNotificationsService.remove(+id);
     }
 }

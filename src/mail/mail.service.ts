@@ -12,6 +12,7 @@ export class MailService {
 
         await this.mailerService.sendMail({
             to: email,
+            cc:'',
             // from: '"Support Team" <support@example.com>', // override default from
             subject: 'Confirmation Mail',
             html: `
@@ -32,6 +33,7 @@ export class MailService {
 
         await this.mailerService.sendMail({
             to: email,
+            cc:'',
             // from: '"Support Team" <support@example.com>', // override default from
             subject: 'Reset password request',
             html: `
@@ -46,8 +48,9 @@ export class MailService {
 
         await this.mailerService.sendMail({
             to: email,
+            cc:'',
             // from: '"Support Team" <support@example.com>', // override default from
-            subject: 'Reset password request',
+            subject: 'Reset password confirmation',
             html: `
             <p>Votre mot de passe a été réinitialisé avec succès</p>
             `

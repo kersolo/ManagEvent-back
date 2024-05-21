@@ -36,7 +36,7 @@ export class TasksService {
     constructor(private readonly prismaService: PrismaService) { }
 
  async create(createTaskDto: CreateTaskDto): Promise<Task> {
-        return this.prismaService.task.create({
+        return await this.prismaService.task.create({
             data: createTaskDto
         });
     }
@@ -44,7 +44,7 @@ export class TasksService {
     async findAll(): Promise<Task[]> {
         return await this.prismaService.task.findMany({
             orderBy: { createdAt: "desc" },
-            include: this.includeDefault
+           // include: this.includeDefault
         });
     }
 

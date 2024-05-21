@@ -71,9 +71,15 @@ export class UsersService {
         });
     }
 
-    async remove(id: string): Promise<User> {
-        return await this.prismaService.user.delete({
+    async remove(id: string) {
+        const deleteUser =  await this.prismaService.user.delete({
             where: { id },
         });
+        return {
+            statusCode: 200,
+            date: new Date().toISOString(),
+            data: deleteUser ,
+            message: `Success delete ${id}`,
+        }
     }
 }

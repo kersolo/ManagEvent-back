@@ -100,9 +100,14 @@ export class AuthController {
         })
         // url au front 
         const url = "http://localhost:3000/auth/reset-password-request"
-        await this.authService.sendMailResetPasswordRequest(payload.email, url, code);
+        const resetPasswordRequest = await this.authService.sendMailResetPasswordRequest(payload.email, url, code);
 
-        return { data: "Reset password mail has been sent" }
+        return {
+            statusCode: 200,
+            date: new Date().toISOString(),
+            data: resetPasswordRequest,
+            message: "Reset password mail has been sent"
+        }
     }
 
     @Post('reset-password')
@@ -129,23 +134,26 @@ export class AuthController {
 
         const updated_user = await this.usersService.update(user.id, {
             password: payload.password,
-
         });
         // url au front 
         // const url = "http://localhost:3000/auth/reset-password"
         await this.authService.sendMailResetPassword(payload.email);
 
-        return { user: updated_user }
+        return {
+            statusCode: 200,
+            date: new Date().toISOString(),
+            data: updated_user,
+            message: "Your password has been reset, a confirmation email has been sent."
+        }
     }
 
     @UseGuards(AuthGuard)
     @ApiBearerAuth()// pour la doc pour préciser que la route est protégée
     @Delete('delete-account')
-    async deleteAccount(@Req() request: RequestWithUser): Promise<{message: string}> {
+    async deleteAccount(@Req() request: RequestWithUser){
         const userId = request.user.id;
         // console.log("🚀 ~ AuthController ~ deleteAccount ~ userId:", userId)
-        await this.usersService.remove(userId);
-        return {message: "Utilisateur supprimé "}
+        return await this.usersService.remove(userId);
     }
 
     @UseGuards(AuthRefreshGuard)
@@ -165,7 +173,7 @@ export class AuthController {
         );
         if (!isMatched) {
             throw new HttpException('User not found', HttpStatus.NOT_FOUND);
-        } 
+        }
 
         // create new token // refreshToken
         const token = await this.authService.createToken(

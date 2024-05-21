@@ -1,10 +1,12 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, HttpException, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, HttpException, HttpStatus, UseGuards } from '@nestjs/common';
 import { NotificationsService } from './notifications.service';
 import { CreateNotificationDto } from './dto/create-notification.dto';
 import { UpdateNotificationDto } from './dto/update-notification.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { Notification } from '@prisma/client';
+import { AuthGuard } from 'src/auth/guards/auth.guard';
 @ApiTags("Notifications")
+@UseGuards(AuthGuard)
 @Controller('notifications')
 export class NotificationsController {
     constructor(private readonly notificationsService: NotificationsService) { }
@@ -35,8 +37,7 @@ export class NotificationsController {
         if (!notifId) {
             throw new HttpException("Notification not found", HttpStatus.NOT_FOUND);
         }
-        await this.notificationsService.update(id, data);
-        return { message: "Notification updted" };
+        return await this.notificationsService.update(id, data);
     }
 
     @Delete(':id')
@@ -46,8 +47,7 @@ export class NotificationsController {
         if (!notificationId) {
             throw new HttpException("Notification not found", HttpStatus.NOT_FOUND);
         }
-        await this.notificationsService.remove(id);
-        return { message: "Notification" + " " + id + " deleted" };
+        return  await this.notificationsService.remove(id);
     }
 
 }

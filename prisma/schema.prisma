@@ -121,7 +121,7 @@ model UserBadge {
 }
 
 enum RoleEnum {
-    VOLUNTEER
+    VOLUNTEER 
     ADMIN
     SUPERADMIN
 }

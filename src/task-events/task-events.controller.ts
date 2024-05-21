@@ -1,9 +1,11 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, HttpException, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, HttpException, HttpStatus, UseGuards } from '@nestjs/common';
 import { TaskEventsService } from './task-events.service';
 import { CreateTaskEventDto } from './dto/create-task-event.dto';
 import { UpdateTaskEventDto } from './dto/update-task-event.dto';
 import { TaskEvent } from '@prisma/client';
+import { AuthGuard } from 'src/auth/guards/auth.guard';
 
+@UseGuards(AuthGuard)
 @Controller('task-events')
 export class TaskEventsController {
     constructor(private readonly taskEventsService: TaskEventsService) { }
@@ -34,8 +36,7 @@ export class TaskEventsController {
     }
 
     @Delete(':id')
-    async delete(@Param('id', ParseIntPipe) id: number): Promise<{ message: string }> {
-        await this.taskEventsService.remove(id)
-        return { message: "Mission supprimée" }
+    async delete(@Param('id', ParseIntPipe) id: number):Promise<TaskEvent> {
+        return  await this.taskEventsService.remove(id)
     }
 }

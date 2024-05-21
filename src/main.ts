@@ -6,7 +6,7 @@ import { PrismaClientExceptionFilter } from './utils/exception/prisma-client-exc
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.useGlobalPipes(new ValidationPipe());//dto
+  app.useGlobalPipes(new ValidationPipe());//favorise l'utilisation des dto, il valide la compatibilté d un objet avec une classe
 
   const { httpAdapter } = app.get(HttpAdapterHost);
   app.useGlobalFilters(new PrismaClientExceptionFilter(httpAdapter));//validation en bdd

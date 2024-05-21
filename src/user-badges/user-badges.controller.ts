@@ -1,10 +1,11 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, HttpException, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, HttpException, HttpStatus, UseGuards } from '@nestjs/common';
 import { UserBadgesService } from './user-badges.service';
 import { CreateUserBadgeDto } from './dto/create-user-badge.dto';
 import { UpdateUserBadgeDto } from './dto/update-user-badge.dto';
 import { UserBadge } from '@prisma/client';
+import { AuthGuard } from 'src/auth/guards/auth.guard';
 
-
+@UseGuards(AuthGuard)
 @Controller('user-badges')
 export class UserBadgesController {
     constructor(private readonly userBadgesService: UserBadgesService) { }
@@ -41,12 +42,11 @@ export class UserBadgesController {
 
     @Delete(':id')
     async delete(@Param('id') id: string): Promise<UserBadge | { message: string }> {
-     
+
         const userBadgesId = await this.userBadgesService.findOne(+id)
         if (!userBadgesId) {
             throw new HttpException("UserBadge not found", HttpStatus.NOT_FOUND);
         }
-        await this.userBadgesService.remove(+id);
-        return { message: "Bagde deleted" }
+        return await this.userBadgesService.remove(+id);
     }
 }
