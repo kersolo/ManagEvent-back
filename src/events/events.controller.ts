@@ -41,22 +41,21 @@ export class EventsController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string): Promise<Event> {
-    return this.eventsService.findOne(+id);
+  async findOne(@Param('id') id: string): Promise<Event> {
+    return await this.eventsService.findOne(+id);
   }
 
   @Patch(':id')
-  update(
+  async update(
     @Param('id') id: string,
     @Req() request: RequestWithUser,
-
     @Body() updateEventDto: UpdateEventDto,
   ): Promise<Event> {
     const userRole = request.user.role;
     if (userRole === 'Volunteer') {
       throw new HttpException('Unauthorized', 401);
     }
-    return this.eventsService.update(+id, updateEventDto);
+    return await this.eventsService.update(+id, updateEventDto);
   }
 
   @Delete(':id')
