@@ -15,18 +15,17 @@ import { RequestWithUser } from 'src/utils/interfaces/request.interfaces';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersService } from './users.service';
 
+@UseGuards(AuthGuard)
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Get()
-  @UseGuards(AuthGuard)
   findAll() {
     return this.usersService.findAll();
   }
 
   @Get(':id')
-  @UseGuards(AuthGuard)
   findOne(@Param('id') id: string, @Req() request: RequestWithUser) {
     if (request.user.role === 'Volunteer' && request.user.id !== id) {
       throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
@@ -35,7 +34,6 @@ export class UsersController {
   }
 
   @Patch(':id')
-  @UseGuards(AuthGuard)
   async update(
     @Param('id') id: string,
     @Body() updateUserDto: UpdateUserDto,
@@ -63,7 +61,6 @@ export class UsersController {
   }
 
   @Delete(':id')
-  @UseGuards(AuthGuard)
   async remove(@Param('id') id: string, @Req() request: RequestWithUser) {
     const userToDelete = await this.usersService.findOneById(id);
     if (!userToDelete) {
