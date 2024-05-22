@@ -49,7 +49,7 @@ export class EventsService {
         });
     }
 
-    async update(id: number, updateEventDto: UpdateEventDto){
+    async update(id: number, updateEventDto: UpdateEventDto) :Promise<{statusCode:number, date:string, data: Event}>{
         const editData = await this.prismaService.event.update({
             where: { id },
             data: { ...updateEventDto }
@@ -61,7 +61,7 @@ export class EventsService {
         }
     }
 
-    async remove(id: number){
+    async remove(id: number): Promise<{statusCode:number, date:string, data: Event, message:string}>{
         const deleteTask = await this.prismaService.event.delete({
             where: { id }
         });

@@ -16,7 +16,6 @@ export class ProfilesController {
     constructor(private readonly profilesService: ProfilesService,
         private readonly usersService: UsersService) { }
 
-
     @Post()
     async create(
         @Body() createProfileDto: CreateProfileDto,
@@ -33,7 +32,6 @@ export class ProfilesController {
         }
         return this.profilesService.create(createProfileDto);
     }
-
 
     @Get()
     async findAll(@Req() request: RequestWithUser): Promise<Profile[]> {
