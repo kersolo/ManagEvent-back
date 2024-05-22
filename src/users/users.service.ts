@@ -7,13 +7,36 @@ import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UsersService {
+  readonly includeDefault = {
+    profile: true,
+    userTaskEvent: {
+      select: { status: true },
+      include: {
+        task: { select: { id: true, name: true } },
+        event: { select: { id: true, title: true } },
+      },
+    },
+    userNotification: {
+      include: {
+        notification: true,
+      },
+    },
+    userBadge: {
+      select: { level: true },
+      include: {
+        task: { select: { skillName: true, skillBadgePath: true } },
+      },
+    },
+  };
   constructor(private readonly prismaService: PrismaService) {}
 
   async create(createUserDto: CreateUserDto) {
     return await this.prismaService.user.create({ data: createUserDto });
   }
   async findAll() {
-    return await this.prismaService.user.findMany();
+    return await this.prismaService.user.findMany({
+      include: this.includeDefault,
+    });
   }
 
   async findOneByEmail(email: string): Promise<User> {
@@ -21,7 +44,10 @@ export class UsersService {
   }
 
   async findOneById(id: string) {
-    return await this.prismaService.user.findUnique({ where: { id } });
+    return await this.prismaService.user.findUnique({
+      where: { id },
+      include: this.includeDefault,
+    });
   }
 
   async findOneByResetPassToken(resetPassToken: string) {
