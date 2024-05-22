@@ -13,10 +13,10 @@ import { JwtService } from '@nestjs/jwt';
 import { User } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import { UsersService } from 'src/users/users.service';
-import { RequestWithRefresh } from 'src/utils/interfaces/request.interfaces';
 import { AuthService } from './auth.service';
 import { RegisterLoginDto } from './dto/register-login.dto';
 import { AuthRefreshGuard } from './guards/refresh.guard';
+import { RequestWithRefresh } from 'src/utils/interfaces/request';
 
 @Controller('auth')
 export class AuthController {
