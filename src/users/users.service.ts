@@ -10,20 +10,19 @@ export class UsersService {
   readonly includeDefault = {
     profile: true,
     userTaskEvent: {
-      select: { status: true },
-      include: {
+      select: {
+        status: true,
         task: { select: { id: true, name: true } },
         event: { select: { id: true, title: true } },
       },
     },
     userNotification: {
-      include: {
+      select: {
         notification: true,
       },
     },
     userBadge: {
-      select: { level: true },
-      include: {
+      select: {
         task: { select: { skillName: true, skillBadgePath: true } },
       },
     },
