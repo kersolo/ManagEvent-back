@@ -10,9 +10,16 @@ import { UserTaskEventsModule } from './user-task-events/user-task-events.module
 import { UsersModule } from './users/users.module';
 import { UserBadgesModule } from './user-badges/user-badges.module';
 import { AuthModule } from './auth/auth.module';
+import { MediaModule } from './media/media.module';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 @Module({
   imports: [
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '../../'),
+      renderPath: '/upload',
+    }),
     PrismaModule,
     UsersModule,
     ProfilesModule,
@@ -24,6 +31,7 @@ import { AuthModule } from './auth/auth.module';
     UserNotificationsModule,
     UserBadgesModule,
     AuthModule,
+    MediaModule,
   ],
   controllers: [],
   providers: [],
