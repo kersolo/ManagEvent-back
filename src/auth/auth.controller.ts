@@ -85,7 +85,7 @@ export class AuthController {
     }
 
     @Post('reset-password-request')
-    async resetPasswordRequest(@Body() payload: ResetPasswordRequest):Promise<{ statusCode:number, date: string, message: string }> {
+    async resetPasswordRequest(@Body() payload: ResetPasswordRequest): Promise<{ statusCode: number, date: string, message: string }> {
 
         const user = await this.usersService.findOneByEmail(payload.email);
         if (!user) {
@@ -100,7 +100,7 @@ export class AuthController {
         })
         // url au front 
         const url = "http://localhost:3000/auth/reset-password-request"
-         await this.authService.sendMailResetPasswordRequest(payload.email, url, code);
+        await this.authService.sendMailResetPasswordRequest(payload.email, url, code);
 
         return {
             statusCode: 200,
@@ -110,7 +110,7 @@ export class AuthController {
     }
 
     @Post('reset-password')
-    async resetPassword(@Body() payload: ResetPassword):Promise<{ statusCode:number, date: string, data: User, message: string }> {
+    async resetPassword(@Body() payload: ResetPassword): Promise<{ statusCode: number, date: string, data: User, message: string }> {
 
         const user = await this.usersService.findOneByEmail(payload.email);
         if (!user) {
@@ -146,10 +146,10 @@ export class AuthController {
         }
     }
 
-    @UseGuards(AuthGuard)
     @ApiBearerAuth()// pour la doc pour préciser que la route est protégée
+    @UseGuards(AuthGuard)
     @Delete('delete-account')
-    async deleteAccount(@Req() request: RequestWithUser): Promise<User | { statusCode:number, date: string, data: User, message: string }>{
+    async deleteAccount(@Req() request: RequestWithUser): Promise<User | { statusCode: number, date: string, data: User, message: string }> {
         const userId = request.user.id;
         // console.log("🚀 ~ AuthController ~ deleteAccount ~ userId:", userId)
         return await this.usersService.remove(userId);
@@ -185,12 +185,10 @@ export class AuthController {
             process.env.SECRET_REFRESH_KEY,
             '3d',
         );
-
         // const hashedRefresh = await this.authService.hash(refreshToken);
         const updated_user = await this.usersService.update(user.id, {
             refreshToken: refreshToken,
         });
-
         //return everything
         return { user: updated_user, token, refreshToken };
     }
