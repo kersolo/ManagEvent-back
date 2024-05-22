@@ -39,7 +39,7 @@ export class AuthController {
 
     // todo: envoi mail a payload.email
 
-    return { user: newUser };
+    return { message: 'User Created', user: newUser };
   }
 
   @Post('login')
