@@ -24,4 +24,14 @@ export class AuthService {
       expiresIn: expiration,
     });
   }
+
+  async isTokenValid(token: string): Promise<boolean> {
+    const payload = await this.jwtService.verifyAsync(token, {
+      secret: process.env.RESET_PASS_SECRET_KEY,
+    });
+    if (!payload) {
+      return false;
+    }
+    return true;
+  }
 }
