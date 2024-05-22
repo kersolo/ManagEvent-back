@@ -19,9 +19,10 @@ model User {
   password      String   @db.VarChar(100)
   role          RoleEnum @default(Volunteer)
   lastConnexion DateTime @default(now())
-  refreshToken  String   @db.VarChar(255)
+  refreshToken  String?   @db.VarChar(255)
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
+  status        UserStatusEnum @default(Active)
   userTaskEvent UserTaskEvent[]
   userNotification UserNotification[]
   userBadge UserBadge[]
@@ -139,4 +140,10 @@ enum UserTaskEventStatusEnum {
 enum UserNotificationStatusEnum {
   Read
   NotRead
+}
+
+enum UserStatusEnum {
+  Inactive
+  Active
+  Banned
 }
