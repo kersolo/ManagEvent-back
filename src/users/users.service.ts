@@ -11,8 +11,8 @@ export class UsersService {
     return await this.prismaService.user.create({ data: createUserDto });
   }
 
-  findAll() {
-    return `This action returns all users`;
+  async findAll() {
+    return await this.prismaService.user.findMany();
   }
 
   async findOneByEmail(email: string): Promise<User> {
@@ -30,7 +30,7 @@ export class UsersService {
     });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async remove(id: string) {
+    return await this.prismaService.user.delete({ where: { id } });
   }
 }

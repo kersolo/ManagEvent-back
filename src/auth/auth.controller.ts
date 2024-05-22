@@ -14,7 +14,7 @@ import { UsersService } from 'src/users/users.service';
 import { LoginDto } from './dto/login.dto';
 import { AuthRefreshGuard } from './guards/refresh.guard';
 import { User } from '@prisma/client';
-import { RequestWithRefresh } from 'src/utils/interfaces/request.interfaces';
+import { RequestWithRefresh } from 'src/utils/interfaces/request';
 
 @Controller('auth')
 export class AuthController {
