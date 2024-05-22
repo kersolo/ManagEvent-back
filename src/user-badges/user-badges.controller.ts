@@ -1,3 +1,4 @@
+/*
 import { Controller, Get, Post, Body, Patch, Param, Delete, HttpException, HttpStatus, UseGuards } from '@nestjs/common';
 import { UserBadgesService } from './user-badges.service';
 import { CreateUserBadgeDto } from './dto/create-user-badge.dto';
@@ -50,3 +51,4 @@ export class UserBadgesController {
         return await this.userBadgesService.remove(+id);
     }
 }
+*/

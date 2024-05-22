@@ -1,3 +1,4 @@
+/*
 import { Controller, Get, Post, Body, Patch, Param, Delete, HttpException, HttpStatus, UseGuards } from '@nestjs/common';
 import { UserNotificationsService } from './user-notifications.service';
 import { CreateUserNotificationDto } from './dto/create-user-notification.dto';
@@ -52,3 +53,4 @@ export class UserNotificationsController {
         return await this.userNotificationsService.remove(+id);
     }
 }
+*/

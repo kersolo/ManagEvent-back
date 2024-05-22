@@ -1,3 +1,4 @@
+/*
 import { Controller, Get, Post, Body, Patch, Param, Delete, HttpException, HttpStatus, UseGuards } from '@nestjs/common';
 import { UserTaskEventsService } from './user-task-events.service';
 import { CreateUserTaskEventDto } from './dto/create-user-task-event.dto';
@@ -51,3 +52,4 @@ export class UserTaskEventsController {
         return  await this.userTaskEventsService.remove(+id);
     }
 }
+*/
