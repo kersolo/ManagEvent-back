@@ -55,7 +55,7 @@ export class UsersController {
     }
 
     @Delete(':id')
-    async delete(@Param('id') id: string){
+    async delete(@Param('id') id: string):Promise< { statusCode:number, date: string, data: User, message: string }> {
         // if user.role (admin ..... a revoir)
         const user = await this.usersService.findOneById(id)
         if (!user ) {

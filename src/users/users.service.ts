@@ -37,10 +37,16 @@ export class UsersService {
 
     constructor(private readonly prismaService: PrismaService) { }
 
-    async create(createUserDto: CreateUserDto): Promise<User> {
-        return await this.prismaService.user.create({
+    async create(createUserDto: CreateUserDto): Promise< { statusCode:number, date: string, data: User }> {
+
+       const createData = await this.prismaService.user.create({
             data: createUserDto
         });
+        return  {
+            statusCode: 200,
+            date: new Date().toISOString(),
+            data: createData 
+        }
     }
 
     async findAll(): Promise<User[]> {
@@ -71,7 +77,7 @@ export class UsersService {
         });
     }
 
-    async remove(id: string) {
+    async remove(id: string): Promise<{statusCode:number, date: string, data: User, message: string}>  {
         const deleteUser =  await this.prismaService.user.delete({
             where: { id },
         });

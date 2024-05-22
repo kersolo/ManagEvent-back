@@ -85,7 +85,7 @@ export class AuthController {
     }
 
     @Post('reset-password-request')
-    async resetPasswordRequest(@Body() payload: ResetPasswordRequest) {
+    async resetPasswordRequest(@Body() payload: ResetPasswordRequest):Promise<{ statusCode:number, date: string, message: string }> {
 
         const user = await this.usersService.findOneByEmail(payload.email);
         if (!user) {
@@ -100,18 +100,17 @@ export class AuthController {
         })
         // url au front 
         const url = "http://localhost:3000/auth/reset-password-request"
-        const resetPasswordRequest = await this.authService.sendMailResetPasswordRequest(payload.email, url, code);
+         await this.authService.sendMailResetPasswordRequest(payload.email, url, code);
 
         return {
             statusCode: 200,
             date: new Date().toISOString(),
-            data: resetPasswordRequest,
-            message: "Reset password mail has been sent"
+            message: "Reset password request email has been sent"
         }
     }
 
     @Post('reset-password')
-    async resetPassword(@Body() payload: ResetPassword) {
+    async resetPassword(@Body() payload: ResetPassword):Promise<{ statusCode:number, date: string, data: User, message: string }> {
 
         const user = await this.usersService.findOneByEmail(payload.email);
         if (!user) {
@@ -150,7 +149,7 @@ export class AuthController {
     @UseGuards(AuthGuard)
     @ApiBearerAuth()// pour la doc pour préciser que la route est protégée
     @Delete('delete-account')
-    async deleteAccount(@Req() request: RequestWithUser){
+    async deleteAccount(@Req() request: RequestWithUser): Promise<User | { statusCode:number, date: string, data: User, message: string }>{
         const userId = request.user.id;
         // console.log("🚀 ~ AuthController ~ deleteAccount ~ userId:", userId)
         return await this.usersService.remove(userId);

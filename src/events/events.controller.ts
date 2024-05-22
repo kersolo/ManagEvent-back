@@ -14,7 +14,7 @@ export class EventsController {
     constructor(private readonly eventsService: EventsService) { }
 
     @Post('create-event')
-    async create(@Body() createEventDto: CreateEventDto) {
+    async create(@Body() createEventDto: CreateEventDto):Promise< { statusCode:number, date: string, data: Event}> {
         return await this.eventsService.create(createEventDto);
     }
     /* @Post()

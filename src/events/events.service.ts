@@ -24,7 +24,7 @@ export class EventsService {
 
     constructor(private readonly prismaService: PrismaService) { }
 
-    async create(createEventDto: CreateEventDto) {
+    async create(createEventDto: CreateEventDto): Promise< { statusCode:number, date: string, data: Event }> {
         const createData = await this.prismaService.event.create({
             data: createEventDto
         });
