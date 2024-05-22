@@ -19,9 +19,10 @@ export class Interceptor<T> implements NestInterceptor<T, Response<T>> {
   ): Observable<Response<T>> {
     return next.handle().pipe(
       map((data) => ({
-        data,
         statusCode: context.switchToHttp().getResponse().statusCode,
         message: data.message,
+        date: new Date(Date.now()).toISOString(),
+        data,
       })),
     );
   }
