@@ -1,11 +1,12 @@
 import {
   CallHandler,
   ExecutionContext,
+  HttpException,
   Injectable,
   NestInterceptor,
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { catchError, map } from 'rxjs/operators';
 
 interface Response<T> {
   data: T;
@@ -20,10 +21,18 @@ export class Interceptor<T> implements NestInterceptor<T, Response<T>> {
     return next.handle().pipe(
       map((data) => ({
         statusCode: context.switchToHttp().getResponse().statusCode,
-        message: data.message,
         date: new Date(Date.now()).toISOString(),
         data,
       })),
+      catchError((err) => {
+        const response = {
+          status: err.status,
+          date: new Date(Date.now()).toISOString(),
+          message: err.message,
+          error: err,
+        };
+        throw new HttpException(response, err.status);
+      }),
     );
   }
 }
