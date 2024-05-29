@@ -54,6 +54,7 @@ const createUserProfiles = async (users: User[]): Promise<Profile[]> => {
         firstname: faker.person.firstName().substring(0, 50),
         lastname: faker.person.lastName().substring(0, 50),
         nickname: faker.internet.userName().substring(0, 20),
+        avatarPath: 'https://docs.material-tailwind.com/img/face-2.jpg',
       },
     });
     usersProfil.push(userProfilVolunteer);
