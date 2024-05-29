@@ -46,7 +46,7 @@ export class ProfilesController {
     return this.profilesService.create(createProfileDto);
   }
 
-  @Get()
+  @Get('all')
   async findAll(@Req() request: RequestWithUser) {
     const userRole = request.user.role;
     if (userRole === 'Volunteer') {
@@ -55,17 +55,14 @@ export class ProfilesController {
     return await this.profilesService.findAll();
   }
 
-  @Get(':userId')
-  async findOne(
-    @Param('userId') userId: string,
-    @Req() request: RequestWithUser,
-  ) {
+  @Get()
+  async findOne(@Req() request: RequestWithUser) {
     const userRole = request.user.role;
-    const userToGet = await this.usersService.findOneById(userId);
+    const userToGet = await this.usersService.findOneById(request.user.id);
     if (userToGet.id !== request.user.id && userRole === 'Volunteer') {
       throw new HttpException('Unauthorized profile', HttpStatus.UNAUTHORIZED);
     }
-    return await this.profilesService.findOne(userId);
+    return await this.profilesService.findOne(request.user.id);
   }
 
   @Patch(':userId')

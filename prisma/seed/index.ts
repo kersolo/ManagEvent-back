@@ -22,7 +22,7 @@ const createSuperAdminUser = async (): Promise<User> => {
       email: 'admin@mail.com',
       role: RoleEnum.SuperAdmin,
       refreshToken: faker.string.alpha(155),
-      password: await bcrypt.hash('devPunk!', 10),
+      password: await bcrypt.hash('Azerty1234!', 10),
     },
   });
   return superAdmin;
@@ -35,7 +35,7 @@ const createUsers = async (number: number): Promise<User[]> => {
         email: faker.internet.email(),
         role: RoleEnum.Volunteer,
         refreshToken: faker.string.alpha(155),
-        password: await bcrypt.hash('devPunk!', 10),
+        password: await bcrypt.hash('Azerty1234!', 10),
       },
     });
     users.push(userVolunteer);
