@@ -13,7 +13,9 @@ export class UsersService {
       select: {
         status: true,
         task: { select: { id: true, name: true } },
-        event: { select: { id: true, title: true } },
+        event: {
+          select: { id: true, title: true, startDate: true, endDate: true },
+        },
       },
     },
     userNotification: {
@@ -24,6 +26,7 @@ export class UsersService {
     userBadge: {
       select: {
         task: { select: { skillName: true, skillBadgePath: true } },
+        level: true,
       },
     },
   };

@@ -20,7 +20,7 @@ import { UsersService } from './users.service';
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @Get()
+  @Get('all')
   findAll() {
     return this.usersService.findAll();
   }
@@ -31,6 +31,11 @@ export class UsersController {
       throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
     }
     return this.usersService.findOneById(id);
+  }
+
+  @Get()
+  async findOneByToken(@Req() request: RequestWithUser) {
+    return await this.usersService.findOneById(request.user.id);
   }
 
   @Patch(':id')

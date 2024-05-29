@@ -18,6 +18,13 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('apiDoc', app, document);
 
+  app.enableCors();
+  // app.enableCors({
+  //   origin: true,
+  //   methods: 'GET,PUT,PATCH,POST,DELETE',
+  //   allowedHeaders: 'Content-Type, Accept',
+  // });
+
   await app.listen(3000);
 }
 bootstrap();
