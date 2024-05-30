@@ -65,14 +65,13 @@ export class ProfilesController {
     return await this.profilesService.findOne(request.user.id);
   }
 
-  @Patch(':userId')
+  @Patch()
   async update(
-    @Param('userId') userId: string,
     @Req() request: RequestWithUser,
     @Body() updateProfileDto: UpdateProfileDto,
   ) {
-    const userToUpdate = await this.usersService.findOneById(userId);
-    const profileTUpdate = await this.profilesService.findOne(userId);
+    const userToUpdate = await this.usersService.findOneById(request.user.id);
+    const profileTUpdate = await this.profilesService.findOne(request.user.id);
 
     if (!userToUpdate || !profileTUpdate) {
       throw new HttpException('User / Profile not found', HttpStatus.NOT_FOUND);
@@ -89,7 +88,7 @@ export class ProfilesController {
     ) {
       throw new HttpException('Unauthorized profile', HttpStatus.UNAUTHORIZED);
     }
-    return await this.profilesService.update(userId, updateProfileDto);
+    return await this.profilesService.update(request.user.id, updateProfileDto);
   }
 
   @Delete(':userId')

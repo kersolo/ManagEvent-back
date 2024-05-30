@@ -38,19 +38,18 @@ export class UsersController {
     return await this.usersService.findOneById(request.user.id);
   }
 
-  @Patch(':id')
+  @Patch()
   async update(
-    @Param('id') id: string,
     @Body() updateUserDto: UpdateUserDto,
     @Req() request: RequestWithUser,
   ) {
-    const userToUpdate = await this.usersService.findOneById(id);
+    const userToUpdate = await this.usersService.findOneById(request.user.id);
     if (!userToUpdate) {
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);
     }
     if (
       (updateUserDto.role && request.user.role !== 'SuperAdmin') ||
-      (updateUserDto.refreshToken && request.user.id !== id) ||
+      (updateUserDto.refreshToken && request.user.id !== request.user.id) ||
       (userToUpdate.role === 'SuperAdmin' &&
         request.user.role !== 'SuperAdmin') ||
       (userToUpdate.role === 'Admin' &&
@@ -62,7 +61,25 @@ export class UsersController {
     ) {
       throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
     }
-    return this.usersService.update(id, updateUserDto);
+
+    if (updateUserDto.password) {
+      // compare password
+      const isMatch = await this.usersService.compare(
+        request.body.actualPassword,
+        userToUpdate.password,
+      );
+
+      if (!isMatch) {
+        throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+      }
+
+      updateUserDto.password = await this.usersService.hash(
+        updateUserDto.password,
+      );
+      updateUserDto = { password: updateUserDto.password };
+    }
+
+    return this.usersService.update(request.user.id, updateUserDto);
   }
 
   @Delete(':id')
