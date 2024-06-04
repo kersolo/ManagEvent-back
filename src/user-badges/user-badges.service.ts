@@ -8,19 +8,8 @@ import { UserBadge } from '@prisma/client';
 export class UserBadgesService {
 
     readonly includeDefault = {
-        user: {
-            select: {
-                email: true,
-                role: true
-            }
-        },
-        task: {
-            select: {
-                description: true,
-                skillName: true,
-                skillBadgePath: true
-            }
-        }
+        user: true,
+        task: true
     }
 
     constructor(private readonly prismaService: PrismaService) { }

@@ -35,6 +35,7 @@ export class AuthController {
     async register(@Body() payload: RegisterDto) {
 
         const user = await this.usersService.findOneByEmail(payload.email);
+        console.log("🚀 ~ AuthController ~ register ~ user:", user)
         if (user) {
             throw new HttpException('User already exists, please login', HttpStatus.FORBIDDEN);
         }
@@ -45,6 +46,7 @@ export class AuthController {
         await this.authService.sendMailRegistration(payload.email);
 
         return { user: newUser };
+        
     }
 
     @Post('login')
@@ -85,13 +87,12 @@ export class AuthController {
     }
 
     @Post('reset-password-request')
-    async resetPasswordRequest(@Body() payload: ResetPasswordRequest): Promise<{ statusCode: number, date: string, message: string }> {
-
+    async resetPasswordRequest(@Body() payload: ResetPasswordRequest): Promise<{ message: string }> {
         const user = await this.usersService.findOneByEmail(payload.email);
         if (!user) {
             throw new HttpException("User not found", HttpStatus.NOT_FOUND);
         }
-
+        
         const code = speakeasy.totp({
             secret: process.env.OTP_CODE,
             digits: 6, // nbre de caractères
@@ -99,19 +100,16 @@ export class AuthController {
             encoding: "base32" // encodage
         })
         // url au front 
-        const url = "http://localhost:3000/auth/reset-password-request"
+        const url = "http://localhost:3000/auth/reset-password-confirmation"
         await this.authService.sendMailResetPasswordRequest(payload.email, url, code);
 
         return {
-            statusCode: 200,
-            date: new Date().toISOString(),
             message: "Reset password request email has been sent"
         }
     }
 
-    @Post('reset-password')
-    async resetPassword(@Body() payload: ResetPassword): Promise<{ statusCode: number, date: string, data: User, message: string }> {
-
+    @Post('reset-password-confirmation')
+    async resetPasswordConfirmation(@Body() payload: ResetPassword): Promise< User |{message: string }> {
         const user = await this.usersService.findOneByEmail(payload.email);
         if (!user) {
             throw new HttpException("User not found", HttpStatus.NOT_FOUND);
@@ -136,12 +134,8 @@ export class AuthController {
         });
         // url au front 
         // const url = "http://localhost:3000/auth/reset-password"
-        await this.authService.sendMailResetPassword(payload.email);
-
+        await this.authService.sendMailResetPasswordConfirmation(payload.email);
         return {
-            statusCode: 200,
-            date: new Date().toISOString(),
-            data: updated_user,
             message: "Your password has been reset, a confirmation email has been sent."
         }
     }
@@ -149,7 +143,7 @@ export class AuthController {
     @ApiBearerAuth()// pour la doc pour préciser que la route est protégée
     @UseGuards(AuthGuard)
     @Delete('delete-account')
-    async deleteAccount(@Req() request: RequestWithUser): Promise<User | { statusCode: number, date: string, data: User, message: string }> {
+    async deleteAccount(@Req() request: RequestWithUser): Promise<User> {
         const userId = request.user.id;
         // console.log("🚀 ~ AuthController ~ deleteAccount ~ userId:", userId)
         return await this.usersService.remove(userId);

@@ -23,4 +23,9 @@ export class CreateTaskDto {
     @IsNotEmpty()
     @IsString()
     skillBadgePath?: string;
+
+   /* @ApiProperty()
+    @IsNotEmpty()
+    @IsString()
+    userId: string; */
 }

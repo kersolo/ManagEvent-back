@@ -1,50 +1,42 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from 'prisma/prisma.service';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import { Task } from '@prisma/client';
+import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class TasksService {
 
     readonly includeDefault = {
-        taskEvent: {
-            select: {
-                id: true,
-                eventId: true,
-                volunteerNumber: true,
-                needValidation: true,
-            }
-        },
-        userTaskEvent: {
-            select: {
-                id: true,
-                userId: true,
-                eventId: true,
-                status: true,
-            }
-        },
-        userBadge: {
-            select: {
-                id: true,
-                userId: true,
-                level: true
-            }
-        }
+        taskEvent: true,
+        userTaskEvent: true,
+        userBadge: true,
+        user: true
     }
 
     constructor(private readonly prismaService: PrismaService) { }
 
- async create(createTaskDto: CreateTaskDto): Promise<Task> {
+    async create(createTaskDto: CreateTaskDto, userId: string): Promise<Task> {
         return await this.prismaService.task.create({
-            data: createTaskDto
+            data: {
+                ...createTaskDto,
+                userId: userId
+            }
         });
     }
-
+    
     async findAll(): Promise<Task[]> {
         return await this.prismaService.task.findMany({
             orderBy: { createdAt: "desc" },
-           // include: this.includeDefault
+            include: this.includeDefault
+        });
+    }
+
+    async findOneByTitle(name: string): Promise<Task> {
+        return await this.prismaService.task.findUnique({
+            where: { name },
+            include: this.includeDefault
         });
     }
 
@@ -55,7 +47,7 @@ export class TasksService {
         });
     }
 
-   async update(id: number, updateTaskDto: UpdateTaskDto): Promise<Task> {
+    async update(id: number, updateTaskDto: UpdateTaskDto): Promise<Task> {
         return await this.prismaService.task.update({
             where: { id },
             data: { ...updateTaskDto }

@@ -9,17 +9,8 @@ import { UserNotification } from '@prisma/client';
 export class UserNotificationsService {
 
     readonly includeDefault = {
-        user: {
-            select: {
-                email: true,
-                role: true,
-            }
-        },
-        notification: {
-            select: {
-                content: true
-            }
-        }
+        user: true,
+        notification: true
     }
     constructor(private readonly prismaService: PrismaService) { }
 

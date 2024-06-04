@@ -19,4 +19,9 @@ export class CreateUserDto {
     @IsString()
     refreshToken?: string;
 
+    @ApiProperty()
+    @IsOptional()
+    @IsEnum(RoleEnum)
+    role?: RoleEnum;
+
 }

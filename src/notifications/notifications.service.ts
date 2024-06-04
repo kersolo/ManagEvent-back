@@ -6,15 +6,6 @@ import { Notification } from '@prisma/client';
 @Injectable()
 export class NotificationsService {
 
-    readonly includeDefault = {
-        userNotification: {
-            select: {
-                userId: true,
-                status : true
-            }
-        }
-    }
-
     constructor(private readonly prismaService: PrismaService) { }
 
     async create(createNotificationDto: CreateNotificationDto): Promise<Notification> {
@@ -26,26 +17,30 @@ export class NotificationsService {
     async findAll(): Promise<Notification[]> {
         return await this.prismaService.notification.findMany({
             orderBy: { createdAt: "desc" },
-            include: this.includeDefault
+            include: {
+                userNotification: true
+            }
         });
     }
 
-   async findOne(id: number): Promise<Notification> {
+    async findOne(id: number): Promise<Notification> {
         return await this.prismaService.notification.findUnique({
             where: { id },
-            include: this.includeDefault
+            include: {
+                userNotification: true
+            }
         });
     }
 
-   async update(id: number, updateNotificationDto: UpdateNotificationDto): Promise<Notification> {
+    async update(id: number, updateNotificationDto: UpdateNotificationDto): Promise<Notification> {
         return await this.prismaService.notification.update({
             where: { id },
-            data: { ...updateNotificationDto}
+            data: { ...updateNotificationDto }
         });
     }
 
-    async remove(id: number): Promise<Notification>  {
-        return  await this.prismaService.notification.delete({
+    async remove(id: number): Promise<Notification> {
+        return await this.prismaService.notification.delete({
             where: { id }
         });
     }

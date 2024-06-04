@@ -17,16 +17,17 @@ model User {
     id               String             @id @default(uuid())
     email            String             @unique @db.VarChar(100)
     password         String             @db.VarChar(100)
-    role             RoleEnum           @default(VOLUNTEER)
+    role             RoleEnum           @default(Volunteer)
     lastConnexion    DateTime           @default(now())
     refreshToken     String?            @db.VarChar(255) //  @db.Text
-    status           UserStatusEnum     @default(ACTIVE)
+    status           UserStatusEnum     @default(Active)
     createdAt        DateTime           @default(now())
     updatedAt        DateTime           @updatedAt
     userTaskEvent    UserTaskEvent[]
     userNotification UserNotification[]
     userBadge        UserBadge[]
     profile          Profile?
+    task             Task[]
 }
 
 model Profile {
@@ -51,16 +52,20 @@ model Task {
     taskEvent      TaskEvent[]
     userTaskEvent  UserTaskEvent[]
     userBadge      UserBadge[]
+    userId         String?
+    user           User?           @relation(fields: [userId], references: [id], onDelete: SetNull, onUpdate: SetNull)
+
+    @@index([userId])
 }
 
 model Event {
     id            Int             @id @default(autoincrement())
-    title         String          @db.VarChar(30)
+    title         String          @unique @db.VarChar(30)
     description   String          @db.Text()
     adress        String          @db.VarChar(100)
     startDate     DateTime        @db.DateTime
     endDate       DateTime        @db.DateTime
-    status        EventStatusEnum @default(INCOMPLETE)
+    status        EventStatusEnum @default(Incomplete)
     createdAt     DateTime        @default(now())
     updatedAt     DateTime        @updatedAt
     taskEvent     TaskEvent[]
@@ -76,7 +81,6 @@ model Notification {
 }
 
 model TaskEvent {
-    id              Int      @id @default(autoincrement())
     taskId          Int
     eventId         Int
     volunteerNumber Int      @default(1) @db.SmallInt()
@@ -85,65 +89,69 @@ model TaskEvent {
     updatedAt       DateTime @updatedAt
     task            Task     @relation(fields: [taskId], references: [id], onDelete: Cascade, onUpdate: Cascade)
     event           Event    @relation(fields: [eventId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+    @@id([taskId, eventId])
 }
 
 model UserTaskEvent {
-    id        Int                     @id @default(autoincrement())
     userId    String
     taskId    Int
     eventId   Int
-    status    UserTaskEventStatusEnum @default(VALIDATED)
+    status    UserTaskEventStatusEnum @default(Validated)
     createdAt DateTime                @default(now())
     updatedAt DateTime                @updatedAt
     user      User                    @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
     task      Task                    @relation(fields: [taskId], references: [id], onDelete: Cascade, onUpdate: Cascade)
     event     Event                   @relation(fields: [eventId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+    @@id([userId, taskId, eventId])
 }
 
 model UserNotification {
     id             Int                        @id @default(autoincrement())
-    userId         String
-    notificationId Int
-    status         UserNotificationStatusEnum @default(NOTREAD)
+    userId         String?
+    notificationId Int?
+    status         UserNotificationStatusEnum @default(Notread)
     createdAt      DateTime                   @default(now())
     updatedAt      DateTime                   @updatedAt
-    user           User                       @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-    notification   Notification               @relation(fields: [notificationId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    user           User?                      @relation(fields: [userId], references: [id], onDelete: SetNull, onUpdate: SetNull)
+    notification   Notification?              @relation(fields: [notificationId], references: [id], onDelete: SetNull, onUpdate: SetNull)
 }
 
 model UserBadge {
-    id     Int    @id @default(autoincrement())
     userId String
     taskId Int
     level  Int    @default(1) @db.TinyInt()
     user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
     task   Task   @relation(fields: [taskId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+    @@id([userId, taskId])
 }
 
 enum RoleEnum {
-    VOLUNTEER 
-    ADMIN
-    SUPERADMIN
+    Volunteer
+    Admin
+    SuperAdmin
 }
 
 enum EventStatusEnum {
-    COMPLETE // CLOSED
-    INCOMPLETE // OPEN
+    Complete // CLOSED
+    Incomplete // OPEN
 }
 
 enum UserTaskEventStatusEnum {
-    WAITING // PENDING
-    VALIDATED // APPROVED 
-    REFUSED // REJECTED
+    Waiting // PENDING
+    Validated // APPROVED 
+    Refused // REJECTED
 }
 
 enum UserNotificationStatusEnum {
-    READ 
-    NOTREAD // UNREAD
+    Read
+    Notread // UNREAD
 }
 
 enum UserStatusEnum {
-    INACTIVE
-    ACTIVE
-    BANNED
+    Inactive
+    Active
+    Banned
 }

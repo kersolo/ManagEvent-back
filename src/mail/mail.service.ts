@@ -8,8 +8,7 @@ export class MailService {
     constructor(private mailerService: MailerService) { }
 
     async sendMailRegistration(email: string, token: string): Promise<void> {
-        const url = `example.com/auth/confirm?token=${token}`;
-
+        const url = `http://localhost:3000/auth/login?token=${token}`;
         await this.mailerService.sendMail({
             to: email,
             cc:'',
@@ -30,7 +29,6 @@ export class MailService {
     }
 
     async sendMailResetPasswordRequest(email: string, url: string, code: string): Promise<void> {
-
         await this.mailerService.sendMail({
             to: email,
             cc:'',
@@ -44,8 +42,7 @@ export class MailService {
         });
     }
 
-    async sendMailResetPassword(email: string): Promise<void> {
-
+    async sendMailResetPasswordConfirmation(email: string): Promise<void> {
         await this.mailerService.sendMail({
             to: email,
             cc:'',

@@ -9,7 +9,7 @@ import { RequestWithUser } from 'src/utils/interfaces/request.interfaces';
 import { UsersService } from 'src/users/users.service';
 
 @ApiTags("Profiles")
-@UseGuards(AuthGuard)
+//@UseGuards(AuthGuard)
 @Controller('profiles')
 export class ProfilesController {
 
@@ -35,10 +35,10 @@ export class ProfilesController {
 
     @Get()
     async findAll(@Req() request: RequestWithUser): Promise<Profile[]> {
-        const userRole = request.user.role;
+    /*    const userRole = request.user.role;
         if (userRole === 'Volunteer') {
             throw new HttpException('Unauthorized profile', HttpStatus.UNAUTHORIZED);
-        }
+        }*/
         return await this.profilesService.findAll();
     }
 

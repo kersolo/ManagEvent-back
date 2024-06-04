@@ -8,15 +8,6 @@ import { Profile } from '@prisma/client';
 @Injectable()
 export class ProfilesService {
 
-    readonly includeDefault = {
-        user: {
-            select: {
-                email: true,
-                lastConnexion: true,
-            }
-        }
-    }
-
     constructor(private readonly prismaService: PrismaService) { }
 
     async create(createProfileDto: CreateProfileDto): Promise<Profile> {
@@ -28,21 +19,25 @@ export class ProfilesService {
     async findAll(): Promise<Profile[]> {
         return await this.prismaService.profile.findMany({
             orderBy: { createdAt: "desc" },
-            include: this.includeDefault
+            include: {
+                user: true
+            }
         });
     }
 
     async findOne(userId: string): Promise<Profile> {
         return this.prismaService.profile.findUnique({
             where: { userId },
-            include: this.includeDefault
+            include: {
+                user: true
+            }
         });
     }
 
     async update(userId: string, updateProfileDto: UpdateProfileDto): Promise<Profile> {
         return await this.prismaService.profile.update({
             where: { userId },
-            data: {...updateProfileDto}
+            data: { ...updateProfileDto }
         });
     }
 

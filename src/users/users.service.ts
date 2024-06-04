@@ -8,55 +8,28 @@ import { User } from '@prisma/client';
 export class UsersService {
 
     readonly includeDefault = {
-        profile: {
-            select: {
-                firstname: true,
-                lastname: true,
-                nickname: true,
-                avatarPath: true,
-                createdAt: true,
-                updatedAt: true
-            }
-        },
-        userTaskEvent: {
-            select: {
-                status: true
-            }
-        },
-        userNotification: {
-            select: {
-                status: true
-            }
-        },
-        userBadge: {
-            select: {
-                level: true
-            }
-        }
+        userTaskEvent: true,
+        userNotification: true,
+        userBadge: true,
+        profile: true,
+        task: true
     }
 
     constructor(private readonly prismaService: PrismaService) { }
 
-    async create(createUserDto: CreateUserDto): Promise< { statusCode:number, date: string, data: User }> {
-
-       const createData = await this.prismaService.user.create({
+    async create(createUserDto: CreateUserDto): Promise<User> {
+        return await this.prismaService.user.create({
             data: createUserDto
         });
-        return  {
-            statusCode: 200,
-            date: new Date().toISOString(),
-            data: createData 
-        }
     }
 
     async findAll(): Promise<User[]> {
         return await this.prismaService.user.findMany({
             orderBy: { createdAt: "desc" },
             include: this.includeDefault
-
         });
     }
-
+    
     async findOneByEmail(email: string): Promise<User> {
         return await this.prismaService.user.findUnique({
             where: { email }
@@ -77,15 +50,9 @@ export class UsersService {
         });
     }
 
-    async remove(id: string): Promise<{statusCode:number, date: string, data: User, message: string}>  {
-        const deleteUser =  await this.prismaService.user.delete({
+    async remove(id: string): Promise<User> {
+        return await this.prismaService.user.delete({
             where: { id },
         });
-        return {
-            statusCode: 200,
-            date: new Date().toISOString(),
-            data: deleteUser ,
-            message: `Success delete ${id}`,
-        }
     }
 }

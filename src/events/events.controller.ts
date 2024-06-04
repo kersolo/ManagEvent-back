@@ -7,19 +7,26 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
 import { RequestWithUser } from 'src/utils/interfaces/request.interfaces';
 
+
 @ApiBearerAuth() // routes protégées
-@UseGuards(AuthGuard)
+//@UseGuards(AuthGuard)
 @ApiTags("Authenfication")
 @Controller('events')
 export class EventsController {
     constructor(private readonly eventsService: EventsService) { }
 
     @Post('create-event')
-    async create(@Req() request: RequestWithUser, @Body() createEventDto: CreateEventDto): Promise<{ statusCode: number, date: string, data: Event }> {
+    async create(@Req() request: RequestWithUser, @Body() createEventDto: CreateEventDto): Promise<Event> {
         /* const userRole = request.user.role;
          if (userRole === 'Volunteer') {
            throw new HttpException('Unauthorized', 401);
          }*/
+         const { title } = createEventDto
+         const existingEvent = await this.eventsService.findOneByTitle(title)
+         
+         if (existingEvent) {
+             throw new HttpException("Event already exist", HttpStatus.CONFLICT);
+         }
         return await this.eventsService.create(createEventDto);
     }
 
@@ -28,21 +35,31 @@ export class EventsController {
         return await this.eventsService.findAll();
     }
 
-    @Get(':id')
-    async findOne(@Param('id') id: number): Promise<Event | { message: string }> {
+    @Get('find-by-title/:title')
+    async findOneByTitle(@Param('title') title: string): Promise< Event> {
 
-        const eventId = await this.eventsService.findOne(+id)
-        if (!eventId) {
-            throw new HttpException("Event not found", HttpStatus.NOT_FOUND);
+        const existingEvent= await this.eventsService.findOneByTitle(title)
+        if (!existingEvent) {
+            throw new HttpException("Event not found ", HttpStatus.NOT_FOUND);
         }
-        return await this.eventsService.findOne(+id);
+        return await this.eventsService.findOneByTitle(title);   
+    }
+
+    @Get(':id')
+    async findOne(@Param('id') id: number): Promise< Event> {
+
+        const existingEvent= await this.eventsService.findOne(+id)
+        if (!existingEvent) {
+            throw new HttpException("Event not found ", HttpStatus.NOT_FOUND);
+        }
+        return await this.eventsService.findOne(+id);   
     }
 
     @Patch('update-event/:id')
-    async update(@Param('id', ParseIntPipe) id: number, @Req() request: RequestWithUser, @Body() data: UpdateEventDto):Promise<{statusCode:number, date:string, data: Event}> {
+    async update(@Param('id', ParseIntPipe) id: number, @Req() request: RequestWithUser, @Body() data: UpdateEventDto):Promise<Event> {
 
-        const eventId = await this.eventsService.findOne(id)
-        if (!eventId) {
+        const existingEvent= await this.eventsService.findOne(id)
+        if (!existingEvent) {
             throw new HttpException("Event not found", HttpStatus.NOT_FOUND);
         }
         /* const userRole = request.user.role;
@@ -54,10 +71,10 @@ export class EventsController {
     }
 
     @Delete('delete-event/:id')
-    async delete(@Param('id', ParseIntPipe) id: number, @Req() request: RequestWithUser): Promise<{statusCode:number, date:string, data: Event, message:string}> {
-        const eventId = await this.eventsService.findOne(id)
-        if (!eventId) {
-            throw new HttpException("Event not found", HttpStatus.NOT_FOUND);
+    async delete(@Param('id', ParseIntPipe) id: number, @Req() request: RequestWithUser): Promise<Event> {
+        const existingEvent= await this.eventsService.findOne(id)
+        if (!existingEvent) {
+            throw new HttpException("Event not found here", HttpStatus.NOT_FOUND);
         }
        /* const userRole = request.user.role;
         if (userRole === 'Volunteer') {

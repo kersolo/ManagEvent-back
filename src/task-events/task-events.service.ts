@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+/*import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'prisma/prisma.service';
 import { CreateTaskEventDto } from './dto/create-task-event.dto';
 import { UpdateTaskEventDto } from './dto/update-task-event.dto';
@@ -8,23 +8,8 @@ import { TaskEvent } from '@prisma/client';
 export class TaskEventsService {
      
     readonly includeDefault = {
-        task: {
-            select: {
-                name: true,
-                description : true,
-                skillName: true,
-            }
-        },
-        event: {
-            select: {
-                title: true,
-                description: true,
-                adress: true,
-                startDate: true,
-                endDate: true,
-                status : true
-            }
-        }
+        task: true,
+        event: true
     }
 
     constructor(private readonly prismaService: PrismaService) { }
@@ -61,4 +46,4 @@ export class TaskEventsService {
             where: {id}
         });
     }
-}
+}*/
