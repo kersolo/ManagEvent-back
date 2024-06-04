@@ -65,9 +65,9 @@ export class UsersController {
     return this.usersService.update(id, updateUserDto);
   }
 
-  @Delete(':id')
-  async remove(@Param('id') id: string, @Req() request: RequestWithUser) {
-    const userToDelete = await this.usersService.findOneById(id);
+  @Delete()
+  async remove(@Req() request: RequestWithUser) {
+    const userToDelete = await this.usersService.findOneById(request.user.id);
     if (!userToDelete) {
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);
     }
@@ -85,6 +85,6 @@ export class UsersController {
         HttpStatus.UNAUTHORIZED,
       );
     }
-    return this.usersService.remove(id);
+    return this.usersService.remove(request.user.id);
   }
 }
