@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+/*import { Injectable } from '@nestjs/common';
 import { CreateUserBadgeDto } from './dto/create-user-badge.dto';
 import { UpdateUserBadgeDto } from './dto/update-user-badge.dto';
 import { PrismaService } from 'prisma/prisma.service';
@@ -45,4 +45,4 @@ export class UserBadgesService {
             where: { id }
         });
     }
-}
+}*/
