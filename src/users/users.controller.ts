@@ -14,11 +14,15 @@ import { AuthGuard } from 'src/auth/guards/auth.guard';
 import { RequestWithUser } from 'src/utils/interfaces/request';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersService } from './users.service';
+import { AuthService } from 'src/auth/auth.service';
 
 @UseGuards(AuthGuard)
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly authService: AuthService,
+  ) {}
 
   @Get('all')
   findAll() {
@@ -64,7 +68,7 @@ export class UsersController {
 
     if (updateUserDto.password) {
       // compare password
-      const isMatch = await this.usersService.compare(
+      const isMatch = await this.authService.compare(
         request.body.actualPassword,
         userToUpdate.password,
       );
@@ -73,7 +77,7 @@ export class UsersController {
         throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
       }
 
-      updateUserDto.password = await this.usersService.hash(
+      updateUserDto.password = await this.authService.hash(
         updateUserDto.password,
       );
       updateUserDto = { password: updateUserDto.password };
