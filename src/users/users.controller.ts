@@ -14,11 +14,15 @@ import { AuthGuard } from 'src/auth/guards/auth.guard';
 import { RequestWithUser } from 'src/utils/interfaces/request';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersService } from './users.service';
+import { AuthService } from 'src/auth/auth.service';
 
 @UseGuards(AuthGuard)
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly authService: AuthService,
+  ) {}
 
   @Get('all')
   findAll() {
@@ -38,19 +42,18 @@ export class UsersController {
     return await this.usersService.findOneById(request.user.id);
   }
 
-  @Patch(':id')
+  @Patch()
   async update(
-    @Param('id') id: string,
     @Body() updateUserDto: UpdateUserDto,
     @Req() request: RequestWithUser,
   ) {
-    const userToUpdate = await this.usersService.findOneById(id);
+    const userToUpdate = await this.usersService.findOneById(request.user.id);
     if (!userToUpdate) {
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);
     }
     if (
       (updateUserDto.role && request.user.role !== 'SuperAdmin') ||
-      (updateUserDto.refreshToken && request.user.id !== id) ||
+      (updateUserDto.refreshToken && request.user.id !== request.user.id) ||
       (userToUpdate.role === 'SuperAdmin' &&
         request.user.role !== 'SuperAdmin') ||
       (userToUpdate.role === 'Admin' &&
@@ -62,7 +65,25 @@ export class UsersController {
     ) {
       throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
     }
-    return this.usersService.update(id, updateUserDto);
+
+    if (updateUserDto.password) {
+      // compare password
+      const isMatch = await this.authService.compare(
+        request.body.actualPassword,
+        userToUpdate.password,
+      );
+
+      if (!isMatch) {
+        throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+      }
+
+      updateUserDto.password = await this.authService.hash(
+        updateUserDto.password,
+      );
+      updateUserDto = { password: updateUserDto.password };
+    }
+
+    return this.usersService.update(request.user.id, updateUserDto);
   }
 
   @Delete(':id')
