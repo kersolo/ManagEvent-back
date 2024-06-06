@@ -34,4 +34,15 @@ export class AuthService {
     }
     return true;
   }
+
+  async createConfirmToken(
+    payload: { email: string },
+    secret: string,
+    expiration: string | number,
+  ): Promise<string> {
+    return this.jwtService.signAsync(payload, {
+      secret,
+      expiresIn: expiration,
+    });
+  }
 }

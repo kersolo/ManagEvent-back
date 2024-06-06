@@ -9,36 +9,49 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
 import { User } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
+import { MailerService } from 'src/mailer/mailer.service';
 import { UsersService } from 'src/users/users.service';
+import { RequestWithRefresh } from 'src/utils/interfaces/request';
 import { AuthService } from './auth.service';
 import { RegisterLoginDto } from './dto/register-login.dto';
 import { AuthRefreshGuard } from './guards/refresh.guard';
-import { RequestWithRefresh } from 'src/utils/interfaces/request';
 
 @Controller('auth')
 export class AuthController {
   constructor(
     private readonly userService: UsersService,
     private readonly authService: AuthService,
-    private readonly jwtService: JwtService,
+    private readonly mailerService: MailerService,
   ) {}
 
   @Post('register')
   async register(@Body() payload: RegisterLoginDto) {
+    //vérifie si il existe un user avec cet email
     const user = await this.userService.findOneByEmail(payload.email);
     if (user) {
       throw new HttpException('Email already exists', HttpStatus.FORBIDDEN);
     }
-
+    // hash le password
     payload.password = await this.authService.hash(payload.password);
+    //crée un confirmToken
+    const confirmToken = await this.authService.createConfirmToken(
+      { email: payload.email },
+      process.env.CONFIRM_EMAIL_SECRET_KEY,
+      '1d',
+    );
+    //créé le nouveau user avec mail + pass hashé + token
+    const newUser = await this.userService.create({
+      ...payload,
+      confirmToken: confirmToken,
+    });
 
-    const newUser = await this.userService.create(payload);
-
-    // todo: envoi mail a payload.email
-
+    // envoi le mail de confirmation
+    await this.mailerService.sendRegisterConfirmation(
+      newUser.email,
+      confirmToken,
+    );
     return { message: 'User Created', user: newUser };
   }
 
