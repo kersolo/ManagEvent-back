@@ -24,9 +24,14 @@ export class UsersController {
     private readonly authService: AuthService,
   ) {}
 
-  @Get('all')
+  @Get()
   findAll() {
     return this.usersService.findAll();
+  }
+
+  @Get('info')
+  async findOneByToken(@Req() request: RequestWithUser) {
+    return await this.usersService.findOneById(request.user.id);
   }
 
   @Get(':id')
@@ -35,11 +40,6 @@ export class UsersController {
       throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
     }
     return this.usersService.findOneById(id);
-  }
-
-  @Get()
-  async findOneByToken(@Req() request: RequestWithUser) {
-    return await this.usersService.findOneById(request.user.id);
   }
 
   @Patch()
