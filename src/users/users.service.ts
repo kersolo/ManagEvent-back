@@ -59,6 +59,17 @@ export class UsersService {
     });
   }
 
+  async findOneByConfirmToken(confirmToken: string) {
+    console.log(
+      '🚀 ~ UsersService ~ findOneByConfirmToken ~ confirmToken:',
+      confirmToken,
+    );
+
+    return await this.prismaService.user.findFirst({
+      where: { confirmToken },
+    });
+  }
+
   async update(id: string, updateUserDto: UpdateUserDto) {
     const response = await this.prismaService.user.update({
       where: { id },

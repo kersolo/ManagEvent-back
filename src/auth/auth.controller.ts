@@ -41,10 +41,10 @@ export class AuthController {
       process.env.CONFIRM_EMAIL_SECRET_KEY,
       '1d',
     );
-    //créé le nouveau user avec mail + pass hashé + token
+    //créé le nouveau user avec mail + confirmtoken
     const newUser = await this.userService.create({
       ...payload,
-      confirmToken: confirmToken,
+      confirmToken,
     });
 
     // envoi le mail de confirmation
@@ -55,26 +55,45 @@ export class AuthController {
     return { message: 'User Created', user: newUser };
   }
 
+  @Get('register-confirm/:token')
+  async verifyConfirmToken(@Param('token') token: string) {
+    const user = await this.userService.findOneByConfirmToken(token);
+    if (!user) {
+      throw new HttpException('Token not found', 404);
+    }
+    const isValid = await this.authService.isConfirmTokenValid(token);
+    if (!isValid) {
+      throw new HttpException('Invalid or expired token', 401);
+    }
+    const newUser = await this.userService.update(user.id, {
+      status: 'Active',
+    });
+    return { message: 'Success', user: newUser };
+  }
+
   @Post('login')
   async login(@Body() payload: RegisterLoginDto) {
     // check if email exist
     const user = await this.userService.findOneByEmail(payload.email);
-
     if (!user) {
       throw new HttpException('Bad credentials', HttpStatus.FORBIDDEN);
     }
-
+    // check if account is active
+    if (user.status === 'Inactive') {
+      throw new HttpException(
+        'Inactive account, verify email',
+        HttpStatus.FORBIDDEN,
+      );
+    }
     //compare password
     const isMatch = await this.authService.compare(
       payload.password,
       user.password,
     );
-
     if (!isMatch) {
       throw new HttpException('Bad credentials', HttpStatus.FORBIDDEN);
     }
-
-    // create token
+    // create tokens
     const token = await this.authService.createToken(
       { id: user.id, email: payload.email, role: user.role },
       process.env.SECRET_KEY,
@@ -85,13 +104,11 @@ export class AuthController {
       process.env.REFRESH_SECRET_KEY,
       '3d',
     );
-
     const hashedRefresh = await this.authService.hash(refreshToken);
-
+    //add refreshtoken in user in db
     const updated_user = await this.userService.update(user.id, {
       refreshToken: hashedRefresh,
     });
-
     return { user: updated_user, token, refreshToken };
   }
 
@@ -104,14 +121,12 @@ export class AuthController {
     const user: User = await this.userService.findOneById(req.user.id);
     // check user exists
     if (!user) throw new HttpException("User doesn't exist", 404);
-
     // check user.refresh === refresh
     const isMatched: boolean = await this.authService.compare(
       req.refreshToken,
       user.refreshToken,
     );
     if (!isMatched) throw new HttpException('Bad token', 404);
-
     // create new token // refreshToken
     const token = await this.authService.createToken(
       { id: user.id, email: req.user.email, role: user.role },
@@ -123,9 +138,8 @@ export class AuthController {
       process.env.REFRESH_SECRET_KEY,
       '3d',
     );
-
     const hashedRefresh = await this.authService.hash(refreshToken);
-
+    //update refreshtoken in user in db
     const updated_user = await this.userService.update(user.id, {
       refreshToken: hashedRefresh,
     });
@@ -140,7 +154,6 @@ export class AuthController {
     if (!user) {
       throw new HttpException('No user with this email', 404);
     }
-
     const resetPassToken = await this.authService.createToken(
       { id: user.id, email: user.email, role: user.role },
       process.env.RESET_PASS_SECRET_KEY,
@@ -156,16 +169,15 @@ export class AuthController {
 
   @Get('reset-password/:token')
   async displayResetPasswordForm(@Param() token: string) {
-    const user = this.userService.findOneByResetPassToken(token);
-    const isValid = this.authService.isTokenValid(token);
+    const user = await this.userService.findOneByResetPassToken(token);
+    const isValid = await this.authService.isTokenValid(token);
     if (!user) {
       throw new HttpException('Token not found', 404);
     }
     if (!isValid) {
       throw new HttpException('Invalid Token', 401);
     }
-    //TODO eventuel : get user firstname (depuis profileByUserId) and return it
-    return { message: 'Success' };
+    return { message: 'Success', user };
   }
 
   @Post('finalize-reset-password')
@@ -183,6 +195,6 @@ export class AuthController {
       password: newHashPassword,
       resetPassToken: null,
     });
-    return { message: 'Password updated' };
+    return { message: 'Password updated', user };
   }
 }

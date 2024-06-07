@@ -24,7 +24,7 @@ model User {
   resetPassToken String? @db.VarChar(255)
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
-  status        UserStatusEnum @default(Active)
+  status        UserStatusEnum @default(Inactive)
   userTaskEvent UserTaskEvent[]
   userNotification UserNotification[]
   userBadge UserBadge[]

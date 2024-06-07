@@ -34,6 +34,15 @@ export class AuthService {
     }
     return true;
   }
+  async isConfirmTokenValid(token: string): Promise<boolean> {
+    const payload = await this.jwtService.verifyAsync(token, {
+      secret: process.env.CONFIRM_EMAIL_SECRET_KEY,
+    });
+    if (!payload) {
+      return false;
+    }
+    return true;
+  }
 
   async createConfirmToken(
     payload: { email: string },
