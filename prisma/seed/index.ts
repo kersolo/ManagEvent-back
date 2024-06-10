@@ -23,6 +23,7 @@ const createSuperAdminUser = async (): Promise<User> => {
       role: RoleEnum.SuperAdmin,
       refreshToken: faker.string.alpha(155),
       password: await bcrypt.hash('Azerty1234!', 10),
+      status: 'Active',
     },
   });
   return superAdmin;
