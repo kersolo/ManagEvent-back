@@ -36,7 +36,7 @@ export class AuthController {
     // hash le password
     payload.password = await this.authService.hash(payload.password);
     //crée un confirmToken
-    const confirmToken = await this.authService.createConfirmToken(
+    const confirmToken = await this.authService.createToken(
       { email: payload.email },
       process.env.CONFIRM_EMAIL_SECRET_KEY,
       '1d',
@@ -48,7 +48,7 @@ export class AuthController {
     });
 
     // envoi le mail de confirmation
-    await this.mailerService.sendRegisterConfirmation(
+    await this.mailerService.sendRegisterConfirmationEmail(
       newUser.email,
       confirmToken,
     );
@@ -155,22 +155,25 @@ export class AuthController {
       throw new HttpException('No user with this email', 404);
     }
     const resetPassToken = await this.authService.createToken(
-      { id: user.id, email: user.email, role: user.role },
+      { id: user.id },
       process.env.RESET_PASS_SECRET_KEY,
       '1h',
     );
-    const hashResetPassToken = await bcrypt.hash(resetPassToken, 10);
-    await this.userService.update(user.id, {
-      resetPassToken: hashResetPassToken,
-    });
-    //TODO : send email to user.email with link : "http://.../api/finalize-reset-password/{ResetPassToken}" + préciser validité du lien 1h
+    try {
+      await this.userService.update(user.id, {
+        resetPassToken: resetPassToken,
+      });
+    } catch (error) {
+      console.log(error);
+    }
+    await this.mailerService.sendResetPasswordEmail(email, resetPassToken);
     return { message: 'Link send by email' };
   }
 
   @Get('reset-password/:token')
   async displayResetPasswordForm(@Param() token: string) {
     const user = await this.userService.findOneByResetPassToken(token);
-    const isValid = await this.authService.isTokenValid(token);
+    const isValid = await this.authService.isResetPassTokenValid(token);
     if (!user) {
       throw new HttpException('Token not found', 404);
     }
@@ -181,9 +184,11 @@ export class AuthController {
   }
 
   @Post('finalize-reset-password')
-  async finalizeResetPassword(@Body() newPassword: string, token: string) {
+  async finalizeResetPassword(
+    @Body() { newPassword, token }: { newPassword: string; token: string },
+  ) {
     const user = await this.userService.findOneByResetPassToken(token);
-    const isValid = await this.authService.isTokenValid(token);
+    const isValid = await this.authService.isResetPassTokenValid(token);
     if (!user) {
       throw new HttpException('Token not found', 404);
     }

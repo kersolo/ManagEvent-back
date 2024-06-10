@@ -15,7 +15,7 @@ export class AuthService {
   }
 
   async createToken(
-    payload: { id: string; email: string; role: RoleEnum },
+    payload: { id?: string; email?: string; role?: RoleEnum },
     secret: string,
     expiration: string | number,
   ): Promise<string> {
@@ -25,7 +25,7 @@ export class AuthService {
     });
   }
 
-  async isTokenValid(token: string): Promise<boolean> {
+  async isResetPassTokenValid(token: string): Promise<boolean> {
     const payload = await this.jwtService.verifyAsync(token, {
       secret: process.env.RESET_PASS_SECRET_KEY,
     });
@@ -34,6 +34,7 @@ export class AuthService {
     }
     return true;
   }
+
   async isConfirmTokenValid(token: string): Promise<boolean> {
     const payload = await this.jwtService.verifyAsync(token, {
       secret: process.env.CONFIRM_EMAIL_SECRET_KEY,
@@ -42,16 +43,5 @@ export class AuthService {
       return false;
     }
     return true;
-  }
-
-  async createConfirmToken(
-    payload: { email: string },
-    secret: string,
-    expiration: string | number,
-  ): Promise<string> {
-    return this.jwtService.signAsync(payload, {
-      secret,
-      expiresIn: expiration,
-    });
   }
 }
