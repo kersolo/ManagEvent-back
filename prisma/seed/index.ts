@@ -75,7 +75,8 @@ const createEvents = async (number: number): Promise<Event[]> => {
   const events: Event[] = [];
   while (number) {
     const startDate = faker.date.future();
-    const endDate = dateAddDays(1, startDate);
+    const random = Math.floor(Math.random() * 3);
+    const endDate = dateAddDays(random, startDate);
     const event = await prisma.event.create({
       data: {
         title: faker.word.words(2).substring(0, 30),
