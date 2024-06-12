@@ -21,31 +21,13 @@ export class UserTaskEventsService {
     return 'findOne';
   }
 
-  async update(
-    userId: string,
-    taskId: number,
-    eventId: number,
-    updateUserTaskEventDto: UpdateUserTaskEventDto,
-  ) {
-    return await this.prismaService.userTaskEvent.update({
-      where: {
-        userId_taskId_eventId: {
-          userId: userId,
-          taskId: taskId,
-          eventId: eventId,
-        },
-      },
-      data: updateUserTaskEventDto,
-    });
-  }
-
-  async remove(userId: string, taskId: number, eventId: number) {
+  async remove(taskId: string, eventId: string, userId: string) {
     return await this.prismaService.userTaskEvent.delete({
       where: {
         userId_taskId_eventId: {
-          userId: userId,
-          taskId: taskId,
-          eventId: eventId,
+          taskId: +taskId,
+          eventId: +eventId,
+          userId,
         },
       },
     });

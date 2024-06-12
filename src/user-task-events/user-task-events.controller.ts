@@ -34,31 +34,12 @@ export class UserTaskEventsController {
     return this.userTaskEventsService.findOne(+id);
   }
 
-  @Patch()
-  async update(
-    @Param() userId: string,
-    taskId: number,
-    eventId: number,
-    @Body() updateUserTaskEventDto: UpdateUserTaskEventDto,
-  ) {
-    return await this.userTaskEventsService.update(
-      userId,
-      taskId,
-      eventId,
-      updateUserTaskEventDto,
-    );
-  }
-
-  @Delete(':id')
+  @Delete(':taskId/:eventId/:userId')
   async remove(
-    @Param('id') eventId: number,
-    @Req() request: any,
-    taskId: number,
+    @Param('taskId') taskId: string,
+    @Param('eventId') eventId: string,
+    @Param('userId') userId: string,
   ) {
-    return await this.userTaskEventsService.remove(
-      request.user.id,
-      taskId,
-      eventId,
-    );
+    return await this.userTaskEventsService.remove(taskId, eventId, userId);
   }
 }
