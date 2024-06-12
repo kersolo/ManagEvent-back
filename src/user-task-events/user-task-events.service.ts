@@ -7,8 +7,10 @@ import { UpdateUserTaskEventDto } from './dto/update-user-task-event.dto';
 export class UserTaskEventsService {
   constructor(private readonly prismaService: PrismaService) {}
 
-  create(createUserTaskEventDto: CreateUserTaskEventDto) {
-    return 'This action adds a new userTaskEvent';
+  async create(createUserTaskEventDto: CreateUserTaskEventDto) {
+    return await this.prismaService.userTaskEvent.create({
+      data: createUserTaskEventDto,
+    });
   }
 
   findAll() {
@@ -16,14 +18,36 @@ export class UserTaskEventsService {
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} userTaskEvent`;
+    return 'findOne';
   }
 
-  update(id: number, updateUserTaskEventDto: UpdateUserTaskEventDto) {
-    return `This action updates a #${id} userTaskEvent`;
+  async update(
+    userId: string,
+    taskId: number,
+    eventId: number,
+    updateUserTaskEventDto: UpdateUserTaskEventDto,
+  ) {
+    return await this.prismaService.userTaskEvent.update({
+      where: {
+        userId_taskId_eventId: {
+          userId: userId,
+          taskId: taskId,
+          eventId: eventId,
+        },
+      },
+      data: updateUserTaskEventDto,
+    });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} userTaskEvent`;
+  async remove(userId: string, taskId: number, eventId: number) {
+    return await this.prismaService.userTaskEvent.delete({
+      where: {
+        userId_taskId_eventId: {
+          userId: userId,
+          taskId: taskId,
+          eventId: eventId,
+        },
+      },
+    });
   }
 }
