@@ -18,7 +18,10 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "prisma:seed": "npx prisma db seed"
+    "prisma:seed": "npx prisma db seed",
+    "generate:prisma": "npx prisma migrate dev --name init",
+    "prisma:studio": "npx prisma studio &",
+    "start:dockerdev": "npm run generate:prisma && npm run prisma:studio && nest start --watch "
   },
   "prisma": {
     "seed": "ts-node ./prisma/seed/index.ts"
