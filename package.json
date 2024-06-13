@@ -24,9 +24,11 @@
     "start:dockerdev": "npm run generate:prisma && npm run prisma:studio && nest start --watch "
   },
   "prisma": {
-    "seed": "ts-node ./prisma/seed/index.ts"
+    "seed": "ts-node ./prisma/seed/index.js"
   },
   "dependencies": {
+    "@faker-js/faker": "^8.4.1",
+    "@nestjs/cli": "^10.0.0",
     "@nestjs/common": "^10.0.0",
     "@nestjs/core": "^10.0.0",
     "@nestjs/jwt": "^10.2.0",
@@ -37,6 +39,7 @@
     "bcrypt": "^5.1.1",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
+    "express": "^4.19.2",
     "nodemailer": "^6.9.13",
     "reflect-metadata": "^0.2.0",
     "rxjs": "^7.8.1",
@@ -44,8 +47,6 @@
     "swagger-ui-express": "^5.0.0"
   },
   "devDependencies": {
-    "@faker-js/faker": "^8.4.1",
-    "@nestjs/cli": "^10.0.0",
     "@nestjs/schematics": "^10.0.0",
     "@nestjs/testing": "^10.0.0",
     "@types/bcrypt": "^5.0.2",
