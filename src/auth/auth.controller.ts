@@ -97,7 +97,7 @@ export class AuthController {
     const token = await this.authService.createToken(
       { id: user.id, email: payload.email, role: user.role },
       process.env.SECRET_KEY,
-      '3h',
+      "3h",
     );
     const refreshToken = await this.authService.createToken(
       { id: user.id, email: payload.email, role: user.role },
@@ -116,8 +116,9 @@ export class AuthController {
   @UseGuards(AuthRefreshGuard)
   async refreshToken(
     @Req() req: RequestWithRefresh,
-  ): Promise<{ user: User; token: string; refreshToken: string }> {
+  ): Promise<{ user: User; authToken: string; refreshToken: string }> {
     // get user from payload
+    
     const user: User = await this.userService.findOneById(req.user.id);
     // check user exists
     if (!user) throw new HttpException("User doesn't exist", 404);
@@ -128,10 +129,10 @@ export class AuthController {
     );
     if (!isMatched) throw new HttpException('Bad token', 404);
     // create new token // refreshToken
-    const token = await this.authService.createToken(
+    const authToken = await this.authService.createToken(
       { id: user.id, email: req.user.email, role: user.role },
       process.env.SECRET_KEY,
-      '3h',
+      "3h",
     );
     const refreshToken = await this.authService.createToken(
       { id: user.id, email: req.user.email, role: user.role },
@@ -145,7 +146,7 @@ export class AuthController {
     });
 
     //return everything
-    return { user: updated_user, token, refreshToken };
+    return { user: updated_user, authToken, refreshToken };
   }
 
   @Post('reset-password')
