@@ -11,7 +11,7 @@
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
-    "start:prod": "node dist/main",
+    "start:prod": "node dist/src/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "jest",
     "test:watch": "jest --watch",
@@ -19,9 +19,12 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "prisma:seed": "npx prisma db seed",
-    "generate:prisma": "npx prisma migrate dev --name init",
+    "prisma:seedprod": "set NODE_ENV=production&& npx prisma db seed",
+    "prisma:migratedev": "npx prisma migrate dev --name init",
+    "prisma:migrateprod": "npx prisma migrate deploy",
     "prisma:studio": "npx prisma studio &",
-    "start:dockerdev": "npm run generate:prisma && npm run prisma:studio && nest start --watch "
+    "start:dockerdev": "npm run prisma:migratedev && npm run prisma:studio && npm run start:dev ",
+    "start:dockerprod": "npm run prisma:migrateprod && npm run prisma:seedprod && npm run start:prod "
   },
   "prisma": {
     "seed": "ts-node ./prisma/seed/index.ts"
