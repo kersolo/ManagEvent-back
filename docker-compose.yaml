@@ -35,23 +35,23 @@ services:
     ports:
       - 3307:3306
     volumes: 
-      - my-db:/opt/h2-data  #/usr/sbin/mysqld 
+      - my-db:/opt/h2-data 
     restart:  always
     networks:
       - default
 
   phpmyadmin:
     image : phpmyadmin
+    environment: 
+      PMA_PORT: 3306
+      PMA_HOST: db
+      PMA_USER: root
+      PMA_PASSWORD: root
     ports:
       - 8083:80
     links:   
       - db
-    environment: 
-        - PMA_ARBITRARY=1
-
 volumes:
   my-db:
 networks:  
   default:      
-
-     
