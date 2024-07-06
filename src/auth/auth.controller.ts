@@ -34,18 +34,21 @@ export class AuthController {
     @Post('register')
     async register(@Body() payload: RegisterDto) {
 
+        const { email, password } = payload;
+
         const user = await this.usersService.findOneByEmail(payload.email);
-        console.log("🚀 ~ AuthController ~ register ~ user:", user)
+      //  console.log("🚀 ~ AuthController ~ register ~ user:", user)
         if (user) {
             throw new HttpException('User already exists, please login', HttpStatus.FORBIDDEN);
         }
         payload.password = await this.authService.hash(payload.password);
-
+        
         const newUser = await this.usersService.create(payload);
         // todo: envoi mail a payload.email
         await this.authService.sendMailRegistration(payload.email);
 
         return { user: newUser };
+        console.log("🚀 ~ AuthController ~ register ~ user:", user)
         
     }
 
@@ -74,7 +77,7 @@ export class AuthController {
         );
         const refreshToken = await this.authService.createToken(
             { id: user.id, email: payload.email, role: user.role },
-            process.env.SECRET_REFRESH_KEY,
+            process.env.REFRESH_SECRET_KEY,
             '3d',
         );
 
@@ -154,11 +157,9 @@ export class AuthController {
     async refreshToken(
         @Req() req: RequestWithRefresh,
     ): Promise<{ user: User; token: string; refreshToken: string }> {
-        // get user from payload
         const user: User = await this.usersService.findOneById(req.user.id);
         // check user exists
         if (!user) throw new HttpException("User doesn't exist", 404);
-
         // check user.refresh === refresh
         const isMatched: boolean = await this.authService.compare(
             req.refreshToken,
@@ -167,7 +168,6 @@ export class AuthController {
         if (!isMatched) {
             throw new HttpException('User not found', HttpStatus.NOT_FOUND);
         }
-
         // create new token // refreshToken
         const token = await this.authService.createToken(
             { id: user.id, email: req.user.email, role: user.role },
@@ -176,14 +176,12 @@ export class AuthController {
         );
         const refreshToken = await this.authService.createToken(
             { id: user.id, email: req.user.email, role: user.role },
-            process.env.SECRET_REFRESH_KEY,
+            process.env.REFRESH_SECRET_KEY,
             '3d',
         );
-        // const hashedRefresh = await this.authService.hash(refreshToken);
         const updated_user = await this.usersService.update(user.id, {
             refreshToken: refreshToken,
         });
-        //return everything
         return { user: updated_user, token, refreshToken };
     }
 }

@@ -1,4 +1,4 @@
-/*
+
 import { Controller, Get, Post, Body, Patch, Param, Delete, HttpException, HttpStatus, UseGuards } from '@nestjs/common';
 import { UserBadgesService } from './user-badges.service';
 import { CreateUserBadgeDto } from './dto/create-user-badge.dto';
@@ -21,7 +21,7 @@ export class UserBadgesController {
         return await this.userBadgesService.findAll();
     }
 
-    @Get(':id')
+  /*  @Get(':id')
     async findOne(@Param('id') id: string): Promise<UserBadge | { message: string }> {
 
         const userBadgesId = await this.userBadgesService.findOne(+id)
@@ -49,6 +49,5 @@ export class UserBadgesController {
             throw new HttpException("UserBadge not found", HttpStatus.NOT_FOUND);
         }
         return await this.userBadgesService.remove(+id);
-    }
+    }*/
 }
-*/

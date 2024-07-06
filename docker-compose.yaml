@@ -1,0 +1,57 @@
+# vresion: "3.3"
+services:
+  back:
+   # image : back-devpunk:1.0.0  j'aurais pu également faire ceci
+    build:
+      context :  . 
+    environment :   
+      DATABASE_URL: mysql://root:root@db:3306/ManagEvent
+      SECRET_KEY: devPunk!
+      REFRESH_SECRET_KEY: devPunk2!!
+      RESET_PASS_SECRET_KEY: devPunk3!!!
+      MAIL_HOST: sandbox.smtp.mailtrap.io
+      MAIL_PORT: 465
+      MAIL_USER: bd2984ff04b9a5
+      MAIL_PASSWORD: 154663de23acc1
+      MAIL_FROM: jomaytik@example.com
+      MAIL_TRANSPORT: smtp://${MAIL_USER}:${MAIL_PASSWORD}@${MAIL_HOST}
+      OTP_CODE: xcvbnloutyrzsqcv
+      PORT: 3000    
+    depends_on :
+      - db
+    ports :    
+      - 3000:3000
+    restart : always
+    networks :
+      - default
+
+  db :  
+    image: mysql:latest
+    environment :  
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: user 
+      MYSQL_PASSWORD: user-password
+      MYSQL_DATABASE: ManagEvent
+    ports:
+      - 3307:3306
+    volumes: 
+      - my-db:/opt/h2-data  #/usr/sbin/mysqld 
+    restart:  always
+    networks:
+      - default
+
+  phpmyadmin:
+    image : phpmyadmin
+    ports:
+      - 8083:80
+    links:   
+      - db
+    environment: 
+        - PMA_ARBITRARY=1
+
+volumes:
+  my-db:
+networks:  
+  default:      
+
+     

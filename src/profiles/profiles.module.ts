@@ -9,4 +9,4 @@ import { UsersModule } from 'src/users/users.module';
   controllers: [ProfilesController],
   providers: [ProfilesService],
 })
-export class ProfilesModule {}
+export class ProfilesModule { }

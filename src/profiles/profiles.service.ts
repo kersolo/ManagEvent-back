@@ -28,9 +28,9 @@ export class ProfilesService {
     async findOne(userId: string): Promise<Profile> {
         return this.prismaService.profile.findUnique({
             where: { userId },
-            include: {
-                user: true
-            }
+         //   include: {
+            //    user: true
+         //   }
         });
     }
 

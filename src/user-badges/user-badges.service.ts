@@ -1,4 +1,4 @@
-/*import { Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CreateUserBadgeDto } from './dto/create-user-badge.dto';
 import { UpdateUserBadgeDto } from './dto/update-user-badge.dto';
 import { PrismaService } from 'prisma/prisma.service';
@@ -26,7 +26,7 @@ export class UserBadgesService {
         });
     }
 
-    async findOne(id: number): Promise<UserBadge> {
+  /*  async findOne(id: number): Promise<UserBadge> {
         return await this.prismaService.userBadge.findUnique({
             where: { id },
             include: this.includeDefault
@@ -44,5 +44,5 @@ export class UserBadgesService {
       return this.prismaService.userBadge.delete({
             where: { id }
         });
-    }
-}*/
+    }*/
+}

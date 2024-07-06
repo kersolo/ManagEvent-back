@@ -39,7 +39,7 @@ export class UsersService {
     async findOneById(id: string): Promise<User> {
         return await this.prismaService.user.findUnique({
             where: { id },
-            include: this.includeDefault
+            include: {profile : true}
         });
     }
 

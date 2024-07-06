@@ -1,4 +1,4 @@
-/*
+
 import { Controller, Get, Post, Body, Patch, Param, Delete, HttpException, HttpStatus, UseGuards } from '@nestjs/common';
 import { UserTaskEventsService } from './user-task-events.service';
 import { CreateUserTaskEventDto } from './dto/create-user-task-event.dto';
@@ -22,7 +22,7 @@ export class UserTaskEventsController {
         return await this.userTaskEventsService.findAll();
     }
 
-    @Get(':id')
+  /*  @Get(':id')
     async findOne(@Param('id') id: string): Promise<UserTaskEvent | { message: string }> {
 
         const UserTaskEventId = await this.userTaskEventsService.findOne(+id)
@@ -50,6 +50,5 @@ export class UserTaskEventsController {
             throw new HttpException("UserTaskEventnot found", HttpStatus.NOT_FOUND);
         }
         return  await this.userTaskEventsService.remove(+id);
-    }
+    }*/
 }
-*/

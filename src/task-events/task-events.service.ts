@@ -1,4 +1,4 @@
-/*import { Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'prisma/prisma.service';
 import { CreateTaskEventDto } from './dto/create-task-event.dto';
 import { UpdateTaskEventDto } from './dto/update-task-event.dto';
@@ -27,7 +27,7 @@ export class TaskEventsService {
         });
     }
 
-  async findOne(id: number): Promise<TaskEvent> {
+ /* async findOne(id: number): Promise<TaskEvent> {
         return  await this.prismaService.taskEvent.findUnique({
             where: { id },
             include: this.includeDefault
@@ -45,5 +45,5 @@ export class TaskEventsService {
        return await this.prismaService.taskEvent.delete({
             where: {id}
         });
-    }
-}*/
+    }*/
+}

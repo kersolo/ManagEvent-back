@@ -1,9 +1,8 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { PrismaService } from 'prisma/prisma.service';
+import { Injectable } from '@nestjs/common';
+import { PrismaService } from '../../prisma/prisma.service';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import { Task } from '@prisma/client';
-import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class TasksService {
@@ -29,11 +28,11 @@ export class TasksService {
     async findAll(): Promise<Task[]> {
         return await this.prismaService.task.findMany({
             orderBy: { createdAt: "desc" },
-            include: this.includeDefault
+           // include: this.includeDefault
         });
     }
 
-    async findOneByTitle(name: string): Promise<Task> {
+    async findOneByName(name: string): Promise<Task> {
         return await this.prismaService.task.findUnique({
             where: { name },
             include: this.includeDefault
@@ -43,7 +42,7 @@ export class TasksService {
     async findOne(id: number): Promise<Task> {
         return await this.prismaService.task.findUnique({
             where: { id },
-            include: this.includeDefault
+           // include: this.includeDefault
         });
     }
 

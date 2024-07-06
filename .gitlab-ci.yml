@@ -1,0 +1,12 @@
+build-prod:
+  stage: deploy
+  image: docker:stable
+  services:
+    - docker:dind
+  before_script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+  script:
+    - docker build --target production_stage  -t $CI_REGISTRY_IMAGE:prod .
+    - docker push $CI_REGISTRY_IMAGE:prod
+  rules:
+    - when: manual

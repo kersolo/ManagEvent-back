@@ -1,4 +1,4 @@
-/*import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, HttpException, HttpStatus, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, HttpException, HttpStatus, UseGuards } from '@nestjs/common';
 import { TaskEventsService } from './task-events.service';
 import { CreateTaskEventDto } from './dto/create-task-event.dto';
 import { UpdateTaskEventDto } from './dto/update-task-event.dto';
@@ -20,7 +20,7 @@ export class TaskEventsController {
         return await this.taskEventsService.findAll();
     }
 
-    @Get(':id')
+   /* @Get(':id')
     async findOne(@Param('id', ParseIntPipe) id: number): Promise<TaskEvent> {
         return await this.taskEventsService.findOne(id);
     }
@@ -38,6 +38,5 @@ export class TaskEventsController {
     @Delete(':id')
     async delete(@Param('id', ParseIntPipe) id: number):Promise<TaskEvent> {
         return  await this.taskEventsService.remove(id)
-    }
+    }*/
 }
-*/

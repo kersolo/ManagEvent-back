@@ -42,29 +42,29 @@ export class ProfilesController {
         return await this.profilesService.findAll();
     }
 
-    @Get(':userId')
+    @Get('findOneBy/:userId')
     async findOne(
         @Param('userId') userId: string,
         @Req() request: RequestWithUser,
     ): Promise<Profile> {
-        const userRole = request.user.role;
-        const userToGet = await this.usersService.findOneById(userId);
-        if (userToGet.id !== request.user.id && userRole === 'Volunteer') {
-            throw new HttpException('Unauthorized profile', HttpStatus.UNAUTHORIZED);
-        }
+      //  const userRole = request.user.role;
+       // const userToGet = await this.usersService.findOneById(userId);
+     //   if (userToGet.id !== request.user.id && userRole === 'Volunteer') {
+         //   throw new HttpException('Unauthorized profile', HttpStatus.UNAUTHORIZED);
+       // }
         return await this.profilesService.findOne(userId);
     }
 
-    @Patch(':userId')
+    @Patch('update/:userId')
     async update(
         @Param('userId') userId: string,
         @Req() request: RequestWithUser,
         @Body() updateProfileDto: UpdateProfileDto,
     ) {
-        const userToUpdate = await this.usersService.findOneById(userId);
-        const profileTUpdate = await this.profilesService.findOne(userId);
+       // const userToUpdate = await this.usersService.findOneById(userId);
+       // const profileTUpdate = await this.profilesService.findOne(userId);
 
-        if (!userToUpdate || !profileTUpdate) {
+      /*  if (!userToUpdate || !profileTUpdate) {
             throw new HttpException('User / Profile not found', HttpStatus.NOT_FOUND);
         }
         if (
@@ -78,16 +78,16 @@ export class ProfilesController {
                 userToUpdate.id !== request.user.id)
         ) {
             throw new HttpException('Unauthorized profile', HttpStatus.UNAUTHORIZED);
-        }
+        }*/
         return await this.profilesService.update(userId, updateProfileDto);
     }
 
-    @Delete(':userId')
+    @Delete('delete/:userId')
     async remove(
         @Param('userId') userId: string,
         @Req() request: RequestWithUser,
     ) {
-        const userToDelete = await this.usersService.findOneById(userId);
+      /*  const userToDelete = await this.usersService.findOneById(userId);
         const profileToDelete = await this.profilesService.findOne(userId);
         if (!userToDelete || !profileToDelete) {
             throw new HttpException('User / Profile not found', HttpStatus.NOT_FOUND);
@@ -103,7 +103,7 @@ export class ProfilesController {
                 userToDelete.id !== request.user.id)
         ) {
             throw new HttpException('Unauthorized profile', HttpStatus.UNAUTHORIZED);
-        }
+        } */
         return await this.profilesService.remove(userId);
     }
 

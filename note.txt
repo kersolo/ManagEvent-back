@@ -1,0 +1,51 @@
+pipes/ : Pour la validation et la transformation des données d’entrée.
+	•	filters/ : Pour le traitement des exceptions.
+
+	a quoi servent les decorateurs: ils servent a ajouter une fonctionnalité supplémentaire à une classe, une méthode ou une propriété , ils permettent d'ajouter la logique ou de la configuration  à des éléments spécifiques de votre application.
+	Les décorateurs peuvent être utilisés pour diverses tâches, telles que l'injection de dépendances, la définition de routes, la validation des données, l'authentification, etc. Ils simplifient le processus de développement en fournissant une syntaxe concise et expressive.
+	
+	common/ : Contient des éléments réutilisables comme des décorateurs, des gardes, des pipes et des filtres.
+	•	decorators/ : Définition des décorateurs réutilisables.
+	•	guards/ : Contient les gardes d’autorisation.
+	•	pipes/ : Pour la validation et la transformation des données d’entrée.
+	•	filters/ : Pour le traitement des exceptions.
+
+	cookies # localstorage
+
+	Une architecture modulaire dans le back-end se réfère à une approche de conception logicielle où le système est divisé en modules indépendants et interconnectés. Chaque module a une responsabilité spécifique et communique avec les autres modules à travers des interfaces bien définies.
+
+Cette approche permet une meilleure organisation et une plus grande flexibilité du code. Chaque module peut être développé, testé et déployé de manière indépendante, ce qui facilite la maintenance et les mises à jour du système. De plus, l'architecture modulaire facilite la réutilisation des modules dans d'autres projets, ce qui peut accélérer le développement et réduire les coûts.
+
+En utilisant une architecture modulaire, les équipes de développement peuvent travailler de manière collaborative et se concentrer sur des domaines spécifiques du système sans interférer avec les autres parties. Cela permet également de détecter et de résoudre plus facilement les problèmes, puisque chaque module est isolé et peut être testé individuellement.
+
+En résumé, une architecture modulaire dans le back-end offre une approche structurée pour développer des systèmes logiciels robustes, évolutifs et faciles à entretenir.
+
+différence tests front et tests unitaires , 
+tests unitaires fct par fct
+Nos routes sont des fonctions , tests d'intégration, Scaffold (échaffaudage), 
+cypress teste plus l'affichage cad si il y'a affichage ça veut dire que la réquête est bien passée
+
+variables d'etat (booléen), hook [open , setOpen] = useState(false)
+
+tests unitaires teste si chaque fonction repond a ce qu on attendait (bien implémentée) et aussi pour savoir si on n'a propagé une coquille dans notre application.
+NB : utilisateur est un terme qu on utilise plus  en front 
+tests fonctionnels teste les fonctionnalités de l'appli .
+
+Parser : cad vérifier la syntaxe du code et de le traduire en une structure de données internes
+Un parseur(parser) est un  programme ou une fonction qui analyse une séquence de caractères (generalement du code source ) son rôle est de vérifier la syntaxe du code et de le traduire en une structure de données interconnectés
+
+Les Mocks=> dans le test st des remplacements de Prisma : on les utilisent pour ne pas casser la BDD, pour simuler la même focntion que Prisma.
+Provider: ce dont a besoin pour faire fonctionner un service (dépendances)
+les contraintes: les défis...
+Surcharge : recréer le comportement d'une fonction, le sur coder
+
+pipes
+
+
+Architecture monolithique : Une architecture monolithique est une approche où l’ensemble du code et des fonctionnalités est implémenté dans un seul programme, formant un seul bloc indivisible. Tous les composants de l'application sont étroitement liés et déployés ensemble, ce qui peut simplifier les aspects initiaux du développement mais complexifie les mises à jour et l'évolutivité à long terme.
+
+Architecture en microservices : Contrairement à l'architecture monolithique, l'architecture en microservices permet de découpler les différentes fonctionnalités de l'application en services indépendants. Chaque service peut être développé, déployé et mis à l'échelle de manière autonome. Cette approche favorise une meilleure modularité, une maintenance facilitée et une capacité à adopter rapidement de nouvelles technologies.
+
+Dockerfile : pour créer une image docker
+docker-compose: comme un plan d'architecte la ou st ttes les infos 
+Qd on fait du microservice(ms) c'est qu'on ne fait pas du SQL on utilise Mongo DB par exemple
